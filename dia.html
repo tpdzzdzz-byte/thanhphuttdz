@@ -1,0 +1,2211 @@
+<!DOCTYPE html>
+<html lang="vi" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kiểm Tra Trắc Nghiệm Địa Lí 12 - Chuẩn Cấu Trúc Bộ GD&ĐT 2026</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter &Plus Jakarta Sans & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        geo: {
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                            800: '#065f46',
+                            900: '#064e3b',
+                            950: '#022c22',
+                        },
+                        ocean: {
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.04);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #10b981;
+            border-radius: 9999px;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: #059669;
+        }
+        /* Topographic subtle background pattern */
+        .topo-pattern {
+            background-color: #064e3b;
+            background-image: radial-gradient(rgba(16, 185, 129, 0.16) 1px, transparent 1px), radial-gradient(rgba(14, 165, 233, 0.12) 1px, #064e3b 1px);
+            background-size: 32px 32px;
+            background-position: 0 0, 16px 16px;
+        }
+        @keyframes pulse-fast {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.45; }
+        }
+        .timer-warning {
+            animation: pulse-fast 1.2s infinite;
+        }
+        /* Underline highlight style matching the original docx */
+        .correct-underline {
+            text-decoration: underline;
+            text-decoration-thickness: 2.5px;
+            text-underline-offset: 4px;
+            text-decoration-color: #059669;
+        }
+        .dark .correct-underline {
+            text-decoration-color: #34d399;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-200">
+
+    <!-- STICKY HEADER -->
+    <header class="sticky top-0 z-40 topo-pattern text-white shadow-lg border-b border-emerald-400/30">
+        <div class="max-w-7xl mx-auto px-3 sm:px-6 h-16 flex items-center justify-between gap-2">
+            <!-- Brand / Title -->
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center text-geo-950 font-extrabold text-lg shadow-md shrink-0">
+                    <i class="fa-solid fa-earth-asia"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h1 class="font-bold text-sm sm:text-base tracking-tight text-white line-clamp-1">ĐỊA LÍ 12 - ÔN TẬP GIỮA KỲ 1 (2026 - 2027)</h1>
+                        <span class="hidden md:inline-block text-[11px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-400/20 text-emerald-200 border border-emerald-400/30">Chuẩn Bộ GD&ĐT 2026</span>
+                    </div>
+                    <p class="text-xs text-emerald-100/80 line-clamp-1">Đảo câu hỏi • Đảo A, B, C, D • Có Đúng/Sai & Trả lời ngắn</p>
+                </div>
+            </div>
+
+            <!-- Active Exam Controls (Hidden on Setup Screen) -->
+            <div id="examHeaderControls" class="hidden items-center gap-2 sm:gap-3">
+                <!-- Progress Pill -->
+                <div class="hidden xl:flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-xl text-xs font-medium border border-white/10">
+                    <i class="fa-solid fa-compass text-emerald-300"></i>
+                    <span>Tiến độ: <strong id="headerProgressText" class="text-emerald-300">0/28</strong></span>
+                </div>
+
+                <!-- Countdown Timer -->
+                <div id="timerContainer" class="flex items-center gap-2 bg-slate-950/60 border border-emerald-400/40 px-3 py-1.5 rounded-xl font-mono font-bold text-sm sm:text-base text-emerald-300 shadow-inner">
+                    <i class="fa-regular fa-clock"></i>
+                    <span id="timerDisplay">45:00</span>
+                </div>
+
+                <!-- Mini Calculator Button -->
+                <button onclick="toggleCalculator()" class="p-2 sm:px-3 sm:py-2 rounded-xl bg-white/10 hover:bg-white/20 text-emerald-200 text-xs sm:text-sm font-semibold flex items-center gap-1.5 transition" title="Máy tính bỏ túi tính bảng số liệu">
+                    <i class="fa-solid fa-calculator"></i>
+                    <span class="hidden md:inline">Máy tính</span>
+                </button>
+
+                <!-- Mobile Palette Button -->
+                <button onclick="toggleMobilePalette()" class="lg:hidden p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white relative" title="Bảng câu hỏi">
+                    <i class="fa-solid fa-table-cells"></i>
+                    <span id="mobileProgressBadge" class="absolute -top-1 -right-1 bg-emerald-400 text-geo-950 text-[10px] font-bold px-1.5 rounded-full">0</span>
+                </button>
+
+                <!-- Re-shuffle / New Exam Button -->
+                <button onclick="confirmReshuffle()" class="hidden sm:flex items-center gap-1.5 bg-white/10 hover:bg-white/20 text-white text-xs sm:text-sm font-medium px-3 py-2 rounded-xl transition" title="Tạo đề mới đảo câu hỏi và đáp án">
+                    <i class="fa-solid fa-shuffle text-emerald-300"></i>
+                    <span class="hidden md:inline">Đảo đề mới</span>
+                </button>
+
+                <!-- Submit Exam Button -->
+                <button id="headerSubmitBtn" onclick="openSubmitModal()" class="flex items-center gap-1.5 bg-gradient-to-r from-emerald-400 to-teal-500 hover:from-emerald-500 hover:to-teal-600 text-geo-950 font-extrabold text-xs sm:text-sm px-3.5 py-2 rounded-xl shadow-md transition transform active:scale-95">
+                    <i class="fa-solid fa-paper-plane"></i>
+                    <span>Nộp bài</span>
+                </button>
+            </div>
+
+            <!-- Right Actions (Theme Toggle & Config Home) -->
+            <div class="flex items-center gap-2">
+                <button id="backToConfigBtn" onclick="confirmExitToSetup()" class="hidden items-center gap-1.5 text-xs sm:text-sm bg-white/10 hover:bg-white/20 px-3 py-2 rounded-xl transition" title="Cấu hình đề thi">
+                    <i class="fa-solid fa-sliders"></i>
+                    <span class="hidden sm:inline">Cấu hình</span>
+                </button>
+                <button onclick="toggleDarkMode()" class="w-9 h-9 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center text-emerald-200 transition" title="Đổi giao diện Sáng/Tối">
+                    <i id="themeIcon" class="fa-solid fa-moon"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 py-6">
+
+        <!-- ================= VIEW 1: SETUP & CONFIGURATION SCREEN ================= -->
+        <section id="setupScreen" class="max-w-4xl mx-auto space-y-6">
+            <!-- Geography Hero Banner -->
+            <div class="topo-pattern rounded-2xl p-6 sm:p-8 text-white shadow-xl border border-emerald-400/30 relative overflow-hidden">
+                <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+                    <div class="space-y-3 max-w-2xl">
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-400/20 border border-emerald-300/30 text-emerald-200 text-xs font-semibold">
+                            <i class="fa-solid fa-map-location-dot"></i> Đề Cương Ôn Tập Giữa Kỳ 1 - Môn Địa Lí 12 (2026 - 2027)
+                        </div>
+                        <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight">Hệ Thống Kiểm Tra Trắc Nghiệm Địa Lí 12</h2>
+                        <p class="text-emerald-100/90 text-sm sm:text-base leading-relaxed">
+                            Tích hợp đầy đủ 3 phần theo đúng định dạng đề thi mới nhất của Bộ GD&ĐT năm 2026: <strong>Phần I (4 phương án)</strong>, <strong>Phần II (Đúng/Sai)</strong> và <strong>Phần III (Trả lời ngắn tính toán số liệu)</strong>. Tự động đảo câu hỏi và đảo vị trí A, B, C, D sau mỗi lần làm.
+                        </p>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2.5 shrink-0">
+                        <div class="bg-white/10 backdrop-blur-xs border border-white/15 rounded-2xl p-3.5 text-center">
+                            <div class="text-2xl font-extrabold text-emerald-300">36</div>
+                            <div class="text-[11px] text-emerald-100 mt-1">Câu Phần I (A,B,C,D)</div>
+                        </div>
+                        <div class="bg-white/10 backdrop-blur-xs border border-white/15 rounded-2xl p-3.5 text-center">
+                            <div class="text-2xl font-extrabold text-sky-300">08</div>
+                            <div class="text-[11px] text-emerald-100 mt-1">Câu Phần II (32 ý Đ/S)</div>
+                        </div>
+                        <div class="bg-white/10 backdrop-blur-xs border border-white/15 rounded-2xl p-3.5 text-center">
+                            <div class="text-2xl font-extrabold text-amber-300">12</div>
+                            <div class="text-[11px] text-emerald-100 mt-1">Câu Phần III (Trả lời ngắn)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Configuration Card -->
+            <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-md border border-slate-200 dark:border-slate-800 p-5 sm:p-7 space-y-6">
+                <h3 class="text-lg font-bold flex items-center gap-2 text-geo-800 dark:text-emerald-400 border-b border-slate-200 dark:border-slate-800 pb-3">
+                    <i class="fa-solid fa-compass-drafting"></i> Thiết Lập Cấu Trúc Đề Thi Địa Lí 12
+                </h3>
+
+                <!-- 1. Exam Mode Selection -->
+                <div class="space-y-3">
+                    <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300">1. Chọn chế độ kiểm tra:</label>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3.5">
+                        <!-- Mode 1: Standard MOET 2026 (18 P1 + 4 P2 + 6 P3) -->
+                        <label id="modeCardStandard" onclick="selectExamMode('standard')" class="cursor-pointer rounded-2xl border-2 border-emerald-500 bg-emerald-50/50 dark:bg-emerald-950/20 p-4 transition flex flex-col justify-between gap-2">
+                            <div class="flex items-start gap-2.5">
+                                <input type="radio" name="examMode" value="standard" checked class="mt-1 accent-emerald-600 w-4 h-4">
+                                <div>
+                                    <div class="font-bold text-slate-900 dark:text-white text-sm flex items-center gap-1.5 flex-wrap">
+                                        <span>Đề Chuẩn Bộ GD&ĐT (28 câu)</span>
+                                        <span class="text-[10px] bg-emerald-500 text-white font-bold px-2 py-0.5 rounded-full">Mặc định</span>
+                                    </div>
+                                    <p class="text-xs text-slate-600 dark:text-slate-400 mt-1 leading-relaxed">
+                                        Đúng chuẩn đề Địa lí Bộ GD&ĐT: <strong>18 câu Phần I</strong> (4,5đ) + <strong>4 câu Phần II</strong> (4,0đ) + <strong>6 câu Phần III trả lời ngắn</strong> (1,5đ) = <strong>10,0 điểm</strong>.
+                                    </p>
+                                </div>
+                            </div>
+                        </label>
+
+                        <!-- Mode 2: Full Outline (All 56 questions) -->
+                        <label id="modeCardFull" onclick="selectExamMode('full')" class="cursor-pointer rounded-2xl border-2 border-slate-200 dark:border-slate-700 hover:border-emerald-400 p-4 transition flex flex-col justify-between gap-2">
+                            <div class="flex items-start gap-2.5">
+                                <input type="radio" name="examMode" value="full" class="mt-1 accent-emerald-600 w-4 h-4">
+                                <div>
+                                    <div class="font-bold text-slate-900 dark:text-white text-sm">Full Toàn Bộ Đề Cương (56 câu)</div>
+                                    <p class="text-xs text-slate-600 dark:text-slate-400 mt-1 leading-relaxed">
+                                        Làm hết 100% ngân hàng đề cương: <strong>36 câu Phần I</strong> + <strong>8 câu Phần II (32 ý Đ/S)</strong> + <strong>12 câu Phần III trả lời ngắn</strong>.
+                                    </p>
+                                </div>
+                            </div>
+                        </label>
+
+                        <!-- Mode 3: Custom Counts -->
+                        <label id="modeCardCustom" onclick="selectExamMode('custom')" class="cursor-pointer rounded-2xl border-2 border-slate-200 dark:border-slate-700 hover:border-emerald-400 p-4 transition flex flex-col justify-between gap-2">
+                            <div class="flex items-start gap-2.5">
+                                <input type="radio" name="examMode" value="custom" class="mt-1 accent-emerald-600 w-4 h-4">
+                                <div>
+                                    <div class="font-bold text-slate-900 dark:text-white text-sm">Tùy Chỉnh Số Lượng Câu</div>
+                                    <p class="text-xs text-slate-600 dark:text-slate-400 mt-1 leading-relaxed">
+                                        Tự chọn số câu muốn luyện tập ở từng phần (Phần I tối đa 36, Phần II tối đa 8, Phần III tối đa 12).
+                                    </p>
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Custom Question Count Controls (Visible in Custom Mode) -->
+                <div id="customCountControls" class="hidden grid-cols-1 sm:grid-cols-3 gap-4 p-4 rounded-2xl bg-emerald-50/50 dark:bg-slate-800/50 border border-emerald-200 dark:border-slate-700">
+                    <div>
+                        <div class="flex justify-between text-xs font-semibold mb-1.5">
+                            <span>Số câu Phần I (A, B, C, D):</span>
+                            <span class="text-emerald-600 dark:text-emerald-400">Tối đa: <strong>36</strong></span>
+                        </div>
+                        <div class="flex gap-2">
+                            <input type="number" id="customP1Input" min="0" max="36" value="18" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-sm font-bold">
+                            <button type="button" onclick="document.getElementById('customP1Input').value = 36" class="px-2.5 py-2 rounded-xl bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 text-xs font-bold shrink-0">36</button>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-xs font-semibold mb-1.5">
+                            <span>Số câu Phần II (Đúng/Sai):</span>
+                            <span class="text-emerald-600 dark:text-emerald-400">Tối đa: <strong>8</strong></span>
+                        </div>
+                        <div class="flex gap-2">
+                            <input type="number" id="customP2Input" min="0" max="8" value="4" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-sm font-bold">
+                            <button type="button" onclick="document.getElementById('customP2Input').value = 8" class="px-2.5 py-2 rounded-xl bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 text-xs font-bold shrink-0">8</button>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-xs font-semibold mb-1.5">
+                            <span>Số câu Phần III (Trả lời ngắn):</span>
+                            <span class="text-emerald-600 dark:text-emerald-400">Tối đa: <strong>12</strong></span>
+                        </div>
+                        <div class="flex gap-2">
+                            <input type="number" id="customP3Input" min="0" max="12" value="6" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-sm font-bold">
+                            <button type="button" onclick="document.getElementById('customP3Input').value = 12" class="px-2.5 py-2 rounded-xl bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 text-xs font-bold shrink-0">12</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Time Limit & Shuffle Options -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+                    <!-- Time limit -->
+                    <div class="space-y-2.5">
+                        <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300">
+                            <i class="fa-regular fa-clock text-emerald-600 mr-1"></i> 2. Thời gian làm bài (phút):
+                        </label>
+                        <div class="flex flex-wrap gap-2">
+                            <button type="button" onclick="setDuration(30)" class="time-preset px-3 py-1.5 rounded-xl text-xs font-semibold border border-slate-200 dark:border-slate-700 hover:border-emerald-500">30p</button>
+                            <button type="button" onclick="setDuration(40)" class="time-preset px-3 py-1.5 rounded-xl text-xs font-semibold border border-slate-200 dark:border-slate-700 hover:border-emerald-500">40p</button>
+                            <button type="button" onclick="setDuration(45)" class="time-preset px-3 py-1.5 rounded-xl text-xs font-bold border-2 border-emerald-500 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300">45p (Mặc định)</button>
+                            <button type="button" onclick="setDuration(50)" class="time-preset px-3 py-1.5 rounded-xl text-xs font-semibold border border-slate-200 dark:border-slate-700 hover:border-emerald-500">50p (Chuẩn Bộ)</button>
+                            <button type="button" onclick="setDuration(90)" class="time-preset px-3 py-1.5 rounded-xl text-xs font-semibold border border-slate-200 dark:border-slate-700 hover:border-emerald-500">90p (Full đề)</button>
+                        </div>
+                        <div class="flex items-center gap-2 pt-1">
+                            <span class="text-xs text-slate-500">Hoặc nhập số phút tùy ý:</span>
+                            <input type="number" id="durationInput" min="1" max="300" value="45" class="w-24 px-3 py-1.5 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-sm font-bold text-center">
+                            <span class="text-xs text-slate-500">phút</span>
+                        </div>
+                    </div>
+
+                    <!-- Shuffle & Study Options -->
+                    <div class="space-y-2.5">
+                        <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300">
+                            <i class="fa-solid fa-shuffle text-emerald-600 mr-1"></i> 3. Tùy chọn đảo đề & gạch chân đáp án:
+                        </label>
+                        <div class="space-y-2 text-xs">
+                            <label class="flex items-center gap-2.5 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 cursor-pointer">
+                                <input type="checkbox" id="shuffleQuestionsCb" checked class="w-4 h-4 accent-emerald-600 rounded">
+                                <span><strong>Đảo vị trí các câu hỏi</strong> ở cả 3 phần mỗi lần thi</span>
+                            </label>
+                            <label class="flex items-center gap-2.5 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 cursor-pointer">
+                                <input type="checkbox" id="shuffleOptionsCb" checked class="w-4 h-4 accent-emerald-600 rounded">
+                                <span><strong>Đảo thứ tự phương án A, B, C, D</strong> và <strong>ý a), b), c), d)</strong></span>
+                            </label>
+                            <label class="flex items-center gap-2.5 p-2.5 rounded-xl bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/60 cursor-pointer">
+                                <input type="checkbox" id="showUnderlineHintCb" class="w-4 h-4 accent-emerald-600 rounded">
+                                <span><strong>Chế độ Ôn tập:</strong> Gạch chân sẵn đáp án đúng như file đề cương gốc (khi tắt sẽ chỉ gạch chân sau khi nộp bài)</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MOET 2026 Geography Scoring Rule Box -->
+                <div class="rounded-2xl bg-emerald-50/70 dark:bg-slate-800/80 border border-emerald-200/80 dark:border-slate-700 p-4 text-xs space-y-2">
+                    <div class="font-bold text-geo-800 dark:text-emerald-400 flex items-center gap-2">
+                        <i class="fa-solid fa-scale-balanced"></i> Cách tính điểm môn Địa lí chuẩn Bộ GD&ĐT (Áp dụng năm 2026):
+                    </div>
+                    <ul class="list-disc list-inside space-y-1.5 text-slate-600 dark:text-slate-300">
+                        <li><strong>Phần I (Nhiều phương án lựa chọn - 18 câu):</strong> Mỗi câu đúng được <strong>0,25 điểm</strong> (18 câu × 0,25đ = <strong>4,5 điểm</strong>).</li>
+                        <li><strong>Phần II (Trắc nghiệm Đúng/Sai - 4 câu, mỗi câu 4 ý a, b, c, d):</strong> Tối đa <strong>1,0 điểm/câu</strong> (4 câu = <strong>4,0 điểm</strong>):
+                            <span class="inline-flex flex-wrap gap-1.5 ml-1 mt-1 sm:mt-0">
+                                <span class="px-2 py-0.5 rounded bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 font-semibold">Đúng 1 ý: <strong>0,1đ</strong></span>
+                                <span class="px-2 py-0.5 rounded bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 font-semibold">Đúng 2 ý: <strong>0,25đ</strong></span>
+                                <span class="px-2 py-0.5 rounded bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 font-semibold">Đúng 3 ý: <strong>0,5đ</strong></span>
+                                <span class="px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 font-bold">Đúng cả 4 ý: <strong>1,0đ</strong></span>
+                            </span>
+                        </li>
+                        <li><strong>Phần III (Trắc nghiệm trả lời ngắn - 6 câu):</strong> Mỗi câu điền kết quả số đúng được <strong>0,25 điểm</strong> (6 câu × 0,25đ = <strong>1,5 điểm</strong>). Hỗ trợ nhập cả dấu phẩy (<code>,</code>) và dấu chấm (<code>.</code>).</li>
+                    </ul>
+                </div>
+
+                <!-- Error Notification Box -->
+                <div id="setupErrorBox" class="hidden p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-600 dark:text-rose-400 text-xs font-semibold"></div>
+
+                <!-- Start Action Button -->
+                <div class="pt-2">
+                    <button type="button" onclick="startExam()" class="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-geo-700 to-teal-600 hover:from-geo-800 hover:to-teal-700 text-white font-extrabold text-base shadow-lg flex items-center justify-center gap-3 transition transform active:scale-[0.99]">
+                        <i class="fa-solid fa-play"></i>
+                        <span>BẮT ĐẦU LÀM BÀI KIỂM TRA ĐỊA LÍ 12</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= VIEW 2: EXAM & REVIEW WORKSPACE ================= -->
+        <section id="examWorkspace" class="hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+                <!-- LEFT / MAIN COLUMN: RESULT BANNER + 3 EXAM SECTIONS -->
+                <div class="lg:col-span-8 xl:col-span-9 space-y-6">
+
+                    <!-- RESULT DASHBOARD (SHOWN AFTER SUBMIT) -->
+                    <div id="resultSummaryPanel" class="hidden bg-white dark:bg-slate-900 rounded-2xl shadow-xl border-2 border-emerald-500 overflow-hidden">
+                        <div class="topo-pattern p-6 text-white flex flex-col sm:flex-row items-center justify-between gap-4">
+                            <div class="space-y-1 text-center sm:text-left">
+                                <span class="text-xs uppercase tracking-widest text-emerald-300 font-bold">KẾT QUẢ BÀI KIỂM TRA ĐỊA LÍ 12</span>
+                                <h2 class="text-2xl font-extrabold" id="resultTitleText">Hoàn thành bài thi!</h2>
+                                <p class="text-xs text-emerald-100" id="resultTimeSpentText">Thời gian làm bài: 00 phút 00 giây</p>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <div class="bg-white/10 backdrop-blur-md border border-emerald-300/40 rounded-2xl px-6 py-3 text-center">
+                                    <div class="text-xs text-emerald-200 uppercase font-semibold">Tổng Điểm (Thang 10)</div>
+                                    <div id="finalScore10Display" class="text-4xl font-black text-emerald-300 mt-0.5">0,00</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Detailed Score Breakdown across 3 Parts -->
+                        <div class="p-5 sm:p-6 space-y-5">
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                <!-- Part I Score Card -->
+                                <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700">
+                                    <div class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">PHẦN I (4 phương án A,B,C,D)</div>
+                                    <div class="text-2xl font-extrabold text-geo-800 dark:text-white mt-1" id="part1ScoreDisplay">0,00 / 4,50đ</div>
+                                    <div class="text-xs text-emerald-600 dark:text-emerald-400 font-semibold mt-1" id="part1CorrectCountDisplay">Đúng 0/18 câu (0,25đ/câu)</div>
+                                </div>
+
+                                <!-- Part II Score Card -->
+                                <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700">
+                                    <div class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">PHẦN II (Đúng / Sai lũy tiến)</div>
+                                    <div class="text-2xl font-extrabold text-geo-800 dark:text-white mt-1" id="part2ScoreDisplay">0,00 / 4,00đ</div>
+                                    <div class="text-xs text-sky-600 dark:text-sky-400 font-semibold mt-1" id="part2SubCountDisplay">Đúng 0/16 ý a,b,c,d</div>
+                                </div>
+
+                                <!-- Part III Score Card -->
+                                <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700">
+                                    <div class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">PHẦN III (Trả lời ngắn)</div>
+                                    <div class="text-2xl font-extrabold text-geo-800 dark:text-white mt-1" id="part3ScoreDisplay">0,00 / 1,50đ</div>
+                                    <div class="text-xs text-amber-600 dark:text-amber-400 font-semibold mt-1" id="part3CorrectCountDisplay">Đúng 0/6 câu (0,25đ/câu)</div>
+                                </div>
+                            </div>
+
+                            <!-- Review Filter Bar & Quick Actions -->
+                            <div class="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-slate-200 dark:border-slate-800">
+                                <div class="flex flex-wrap items-center gap-2">
+                                    <span class="text-xs font-bold text-slate-500 mr-1"><i class="fa-solid fa-filter mr-1"></i>Chế độ xem:</span>
+                                    <button onclick="setReviewFilter('all')" id="filterBtnAll" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-geo-700 text-white">Tất cả câu</button>
+                                    <button onclick="setReviewFilter('wrong')" id="filterBtnWrong" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 dark:bg-slate-800 hover:bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-slate-200 dark:border-slate-700">Câu làm sai / Thiếu điểm</button>
+                                    <button onclick="setReviewFilter('flagged')" id="filterBtnFlagged" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 dark:bg-slate-800 hover:bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-slate-200 dark:border-slate-700">Câu đánh dấu</button>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <button onclick="reshuffleAndRestart()" class="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs sm:text-sm flex items-center gap-2 shadow transition">
+                                        <i class="fa-solid fa-rotate"></i> Làm đề mới (Đảo câu & Đáp án)
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- OFFICIAL EXAM PAPER HEADER -->
+                    <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 p-4 sm:p-6">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-center border-b border-slate-200 dark:border-slate-800 pb-4">
+                            <div>
+                                <p class="text-xs uppercase font-semibold text-slate-500 dark:text-slate-400">BỘ GIÁO DỤC VÀ ĐÀO TẠO</p>
+                                <p class="text-sm font-bold text-geo-800 dark:text-white">ĐỀ KIỂM TRA GIỮA KỲ 1 (2026 - 2027)</p>
+                                <p class="text-[11px] text-slate-500 mt-0.5">Mã đề trộn tự động: <strong id="examCodeDisplay" class="text-emerald-600 dark:text-emerald-400">0412</strong></p>
+                            </div>
+                            <div>
+                                <p class="text-sm font-extrabold uppercase text-geo-700 dark:text-emerald-400">Bài thi môn: ĐỊA LÍ 12</p>
+                                <p class="text-xs font-medium text-slate-600 dark:text-slate-300" id="paperSubInfo">Thời gian làm bài: 45 phút (không kể thời gian phát đề)</p>
+                                <p class="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold mt-0.5"><i class="fa-solid fa-check-double mr-1"></i>Đáp án đúng được gạch chân khi đối chiếu kết quả</p>
+                            </div>
+                        </div>
+
+                        <!-- PART I SECTION CONTAINER -->
+                        <div id="part1SectionWrapper" class="mt-6 space-y-5">
+                            <div class="bg-emerald-50/80 dark:bg-slate-800/90 border-l-4 border-emerald-600 p-4 rounded-r-xl">
+                                <h3 class="font-extrabold text-sm sm:text-base text-geo-900 dark:text-emerald-400 uppercase">
+                                    PHẦN I. Câu trắc nghiệm nhiều phương án lựa chọn
+                                </h3>
+                                <p class="text-xs text-slate-600 dark:text-slate-300 mt-1" id="part1InstructionText">
+                                    Thí sinh trả lời từ câu 1 đến câu 18. Mỗi câu hỏi thí sinh chỉ chọn một phương án (0,25 điểm/câu).
+                                </p>
+                            </div>
+                            <div id="part1QuestionsList" class="space-y-4"></div>
+                        </div>
+
+                        <!-- PART II SECTION CONTAINER -->
+                        <div id="part2SectionWrapper" class="mt-10 space-y-5">
+                            <div class="bg-sky-50/80 dark:bg-slate-800/90 border-l-4 border-sky-500 p-4 rounded-r-xl">
+                                <h3 class="font-extrabold text-sm sm:text-base text-sky-900 dark:text-sky-400 uppercase">
+                                    PHẦN II. Câu trắc nghiệm đúng sai
+                                </h3>
+                                <p class="text-xs text-slate-600 dark:text-slate-300 mt-1" id="part2InstructionText">
+                                    Trong mỗi ý <strong>a), b), c), d)</strong> ở mỗi câu, thí sinh chọn <strong>Đúng</strong> hoặc <strong>Sai</strong>. (Đúng 1 ý: 0,1đ; 2 ý: 0,25đ; 3 ý: 0,5đ; 4 ý: 1,0đ).
+                                </p>
+                            </div>
+                            <div id="part2QuestionsList" class="space-y-6"></div>
+                        </div>
+
+                        <!-- PART III SECTION CONTAINER -->
+                        <div id="part3SectionWrapper" class="mt-10 space-y-5">
+                            <div class="bg-amber-50/80 dark:bg-slate-800/90 border-l-4 border-amber-500 p-4 rounded-r-xl">
+                                <h3 class="font-extrabold text-sm sm:text-base text-amber-900 dark:text-amber-400 uppercase">
+                                    PHẦN III. Câu trắc nghiệm yêu cầu trả lời ngắn
+                                </h3>
+                                <p class="text-xs text-slate-600 dark:text-slate-300 mt-1" id="part3InstructionText">
+                                    Thí sinh tính toán và điền kết quả số vào ô trả lời (0,25 điểm/câu). Hệ thống chấp nhận cả dấu phẩy (<code>,</code>) và dấu chấm (<code>.</code>) thập phân.
+                                </p>
+                            </div>
+                            <div id="part3QuestionsList" class="space-y-5"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT SIDEBAR: QUESTION PALETTE (STICKY ON DESKTOP) -->
+                <aside class="hidden lg:block lg:col-span-4 xl:col-span-3 sticky top-20">
+                    <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-md border border-slate-200 dark:border-slate-800 p-4 space-y-4 max-h-[calc(100vh-6rem)] flex flex-col">
+                        <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
+                            <h4 class="font-bold text-sm flex items-center gap-2 text-geo-800 dark:text-white">
+                                <i class="fa-solid fa-table-cells text-emerald-500"></i> Phiếu Trả Lời Địa Lí
+                            </h4>
+                            <span id="sidebarProgressBadge" class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-700 dark:text-emerald-300">0/28</span>
+                        </div>
+
+                        <!-- Legend -->
+                        <div class="grid grid-cols-2 gap-2 text-[11px] text-slate-600 dark:text-slate-400">
+                            <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-emerald-600 inline-block"></span> Đã làm đủ</div>
+                            <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-amber-300 dark:bg-amber-700 inline-block"></span> Làm một phần</div>
+                            <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded border border-slate-300 dark:border-slate-600 inline-block"></span> Chưa trả lời</div>
+                            <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded ring-2 ring-rose-500 inline-block"></span> Đánh dấu</div>
+                        </div>
+
+                        <!-- Scrollable Palette Grids -->
+                        <div class="overflow-y-auto space-y-4 pr-1 flex-1">
+                            <div id="palettePart1Container" class="space-y-1.5">
+                                <div class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">Phần I (Nhiều lựa chọn)</div>
+                                <div id="palettePart1Grid" class="grid grid-cols-6 gap-1.5"></div>
+                            </div>
+                            <div id="palettePart2Container" class="space-y-1.5">
+                                <div class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">Phần II (Đúng / Sai)</div>
+                                <div id="palettePart2Grid" class="grid grid-cols-4 gap-2"></div>
+                            </div>
+                            <div id="palettePart3Container" class="space-y-1.5">
+                                <div class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">Phần III (Trả lời ngắn)</div>
+                                <div id="palettePart3Grid" class="grid grid-cols-4 gap-2"></div>
+                            </div>
+                        </div>
+
+                        <!-- Bottom Sidebar Buttons -->
+                        <div class="pt-3 border-t border-slate-200 dark:border-slate-800 space-y-2">
+                            <button id="sidebarSubmitBtn" onclick="openSubmitModal()" class="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-extrabold text-sm shadow flex items-center justify-center gap-2 transition">
+                                <i class="fa-solid fa-paper-plane"></i> Nộp Bài & Chấm Điểm
+                            </button>
+                            <button onclick="confirmReshuffle()" class="w-full py-2 px-4 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-semibold text-xs flex items-center justify-center gap-2 transition">
+                                <i class="fa-solid fa-shuffle text-emerald-500"></i> Đảo Đề Mới Ngay
+                            </button>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </section>
+    </main>
+
+    <!-- FLOATING MINI CALCULATOR FOR GEOGRAPHY DATA TABLES -->
+    <div id="calcWidget" class="fixed bottom-4 right-4 z-50 hidden w-72 bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border-2 border-emerald-500 overflow-hidden">
+        <div class="topo-pattern px-4 py-2.5 text-white flex items-center justify-between">
+            <span class="text-xs font-bold flex items-center gap-2"><i class="fa-solid fa-calculator text-emerald-300"></i> Máy Tính Địa Lí</span>
+            <button onclick="toggleCalculator()" class="text-white/80 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="p-3 space-y-2.5">
+            <input type="text" id="calcDisplay" readonly value="0" class="w-full px-3 py-2 text-right font-mono text-lg font-bold rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700">
+            <div class="grid grid-cols-4 gap-1.5 text-sm font-bold">
+                <button onclick="calcInput('C')" class="p-2 rounded-lg bg-rose-500/15 text-rose-600 dark:text-rose-400">C</button>
+                <button onclick="calcInput('(')" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800">(</button>
+                <button onclick="calcInput(')')" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800">)</button>
+                <button onclick="calcInput('/')" class="p-2 rounded-lg bg-emerald-500/15 text-emerald-600">÷</button>
+
+                <button onclick="calcInput('7')" class="p-2 rounded-lg bg-slate-50 dark:bg-slate-800/60">7</button>
+                <button onclick="calcInput('8')" class="p-2 rounded-lg bg-slate-50 dark:bg-slate-800/60">8</button>
+                <button onclick="calcInput('9')" class="p-2 rounded-lg bg-slate-50 dark:bg-slate-800/60">9</button>
+                <button onclick="calcInput('*')" class="p-2 rounded-lg bg-emerald-500/15 text-emerald-600">×</button>
+
+                <button onclick="calcInput('4')" class="p-2 rounded-lg bg-slate-50 dark:bg-slate-800/60">4</button>
+                <button onclick="calcInput('5')" class="p-2 rounded-lg bg-slate-50 dark:bg-slate-800/60">5</button>
+                <button onclick="calcInput('6')" class="p-2 rounded-lg bg-slate-50 dark:bg-slate-800/60">6</button>
+                <button onclick="calcInput('-')" class="p-2 rounded-lg bg-emerald-500/15 text-emerald-600">−</button>
+
+                <button onclick="calcInput('1')" class="p-2 rounded-lg bg-slate-50 dark:bg-slate-800/60">1</button>
+                <button onclick="calcInput('2')" class="p-2 rounded-lg bg-slate-50 dark:bg-slate-800/60">2</button>
+                <button onclick="calcInput('3')" class="p-2 rounded-lg bg-slate-50 dark:bg-slate-800/60">3</button>
+                <button onclick="calcInput('+')" class="p-2 rounded-lg bg-emerald-500/15 text-emerald-600">+</button>
+
+                <button onclick="calcInput('0')" class="p-2 rounded-lg bg-slate-50 dark:bg-slate-800/60">0</button>
+                <button onclick="calcInput('.')" class="p-2 rounded-lg bg-slate-50 dark:bg-slate-800/60">.</button>
+                <button onclick="calcInput('DEL')" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-xs">⌫</button>
+                <button onclick="calcInput('=')" class="p-2 rounded-lg bg-emerald-600 text-white">=</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MOBILE QUESTION PALETTE DRAWER -->
+    <div id="mobilePaletteModal" class="fixed inset-0 z-50 hidden bg-black/60 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4">
+        <div class="bg-white dark:bg-slate-900 w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl max-h-[82vh] flex flex-col p-5 shadow-2xl border border-slate-200 dark:border-slate-800">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
+                <h4 class="font-bold text-base flex items-center gap-2">
+                    <i class="fa-solid fa-table-cells text-emerald-500"></i> Phiếu trả lời trắc nghiệm
+                </h4>
+                <button onclick="toggleMobilePalette()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="overflow-y-auto py-4 space-y-4 flex-1">
+                <div>
+                    <div class="text-xs font-bold text-slate-500 uppercase mb-2">Phần I (Nhiều phương án)</div>
+                    <div id="mobilePalettePart1Grid" class="grid grid-cols-6 gap-2"></div>
+                </div>
+                <div>
+                    <div class="text-xs font-bold text-slate-500 uppercase mb-2">Phần II (Đúng / Sai)</div>
+                    <div id="mobilePalettePart2Grid" class="grid grid-cols-4 gap-2"></div>
+                </div>
+                <div>
+                    <div class="text-xs font-bold text-slate-500 uppercase mb-2">Phần III (Trả lời ngắn)</div>
+                    <div id="mobilePalettePart3Grid" class="grid grid-cols-4 gap-2"></div>
+                </div>
+            </div>
+            <div class="pt-3 border-t border-slate-200 dark:border-slate-800 flex gap-2">
+                <button onclick="toggleMobilePalette(); openSubmitModal();" class="flex-1 py-2.5 rounded-xl bg-emerald-600 text-white font-bold text-sm">
+                    Nộp bài ngay
+                </button>
+                <button onclick="toggleMobilePalette()" class="px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 font-semibold text-sm">
+                    Đóng
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CUSTOM CONFIRMATION / SUBMIT MODAL -->
+    <div id="customModal" class="fixed inset-0 z-50 hidden bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 dark:border-slate-800 space-y-4">
+            <div class="flex items-center gap-3">
+                <div class="w-11 h-11 rounded-2xl bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xl shrink-0">
+                    <i class="fa-solid fa-circle-question"></i>
+                </div>
+                <div>
+                    <h3 id="modalTitle" class="font-extrabold text-lg text-slate-900 dark:text-white">Xác nhận nộp bài</h3>
+                    <p id="modalSubtitle" class="text-xs text-slate-500 dark:text-slate-400">Kiểm tra kỹ trước khi kết thúc bài thi</p>
+                </div>
+            </div>
+            <div id="modalBody" class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed bg-slate-50 dark:bg-slate-800/60 p-4 rounded-xl border border-slate-200 dark:border-slate-700"></div>
+            <div class="flex items-center justify-end gap-3 pt-2">
+                <button onclick="closeCustomModal()" class="px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold text-sm transition">
+                    Quay lại làm tiếp
+                </button>
+                <button id="modalConfirmBtn" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-bold text-sm shadow transition">
+                    Đồng ý
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= APPLICATION JAVASCRIPT & FULL GEOGRAPHY QUESTION BANK ================= -->
+    <script>
+        /**************************************************************************
+         * HELPER TẠO BẢNG SỐ LIỆU ĐỊA LÍ CHUẨN ĐẸP
+         **************************************************************************/
+        function buildMonthlyTable(title, unit, rows, source) {
+            const monthsHeader = Array.from({ length: 12 }, (_, i) => `<th class="border border-slate-300 dark:border-slate-600 px-2 py-1.5 text-center font-bold bg-emerald-50/80 dark:bg-slate-800">${i + 1}</th>`).join('');
+            const bodyRows = rows.map(r => `
+                <tr>
+                    <td class="border border-slate-300 dark:border-slate-600 px-2.5 py-1.5 font-semibold bg-slate-50 dark:bg-slate-800/60 whitespace-nowrap">${r.label}</td>
+                    ${r.values.map(v => `<td class="border border-slate-300 dark:border-slate-600 px-2 py-1.5 text-center font-mono text-xs">${v}</td>`).join('')}
+                </tr>
+            `).join('');
+
+            return `
+                <div class="my-3 p-3.5 rounded-xl bg-slate-50/80 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700 overflow-x-auto">
+                    <div class="text-center font-bold text-xs sm:text-sm text-geo-900 dark:text-emerald-300">${title}</div>
+                    <div class="text-center italic text-xs text-slate-500 dark:text-slate-400 mb-2">(${unit})</div>
+                    <table class="w-full border-collapse text-xs">
+                        <thead>
+                            <tr>
+                                <th class="border border-slate-300 dark:border-slate-600 px-2.5 py-1.5 text-left font-bold bg-emerald-50/80 dark:bg-slate-800">Tháng</th>
+                                ${monthsHeader}
+                            </tr>
+                        </thead>
+                        <tbody>${bodyRows}</tbody>
+                    </table>
+                    <div class="text-right italic text-[11px] text-slate-500 dark:text-slate-400 mt-1.5">(${source})</div>
+                </div>
+            `;
+        }
+
+        function buildComparisonTable(title, unit, headers, rows, source) {
+            const headerCells = headers.map(h => `<th class="border border-slate-300 dark:border-slate-600 px-3 py-1.5 text-center font-bold bg-emerald-50/80 dark:bg-slate-800">${h}</th>`).join('');
+            const bodyRows = rows.map(r => `
+                <tr>
+                    <td class="border border-slate-300 dark:border-slate-600 px-3 py-1.5 font-semibold bg-slate-50 dark:bg-slate-800/60">${r.label}</td>
+                    ${r.values.map(v => `<td class="border border-slate-300 dark:border-slate-600 px-3 py-1.5 text-center font-mono text-xs">${v}</td>`).join('')}
+                </tr>
+            `).join('');
+
+            return `
+                <div class="my-3 p-3.5 rounded-xl bg-slate-50/80 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700 overflow-x-auto">
+                    <div class="text-center font-bold text-xs sm:text-sm text-geo-900 dark:text-emerald-300">${title}</div>
+                    <div class="text-center italic text-xs text-slate-500 dark:text-slate-400 mb-2">(${unit})</div>
+                    <table class="w-full max-w-lg mx-auto border-collapse text-xs">
+                        <thead><tr>${headerCells}</tr></thead>
+                        <tbody>${bodyRows}</tbody>
+                    </table>
+                    <div class="text-right italic text-[11px] text-slate-500 dark:text-slate-400 mt-1.5">(${source})</div>
+                </div>
+            `;
+        }
+
+        /**************************************************************************
+         * 1. NGÂN HÀNG CÂU HỎI ĐỊA LÍ 12 ĐẦY ĐỦ 100% TỪ FILE ĐỀ CƯƠNG
+         * - Phần I: 36 câu
+         * - Phần II: 8 câu (32 ý Đúng/Sai)
+         * - Phần III: 12 câu trả lời ngắn
+         **************************************************************************/
+        const GEO_QUESTION_BANK = {
+            part1: [
+                // --- ĐỀ 1 (Câu 1 -> 18) ---
+                {
+                    id: "P1_01",
+                    q: "Gió mùa mùa đông thổi vào nước ta theo hướng chủ yếu nào sau đây?",
+                    correct: "Đông bắc.",
+                    distractors: ["Tây bắc.", "Đông nam.", "Tây nam."]
+                },
+                {
+                    id: "P1_02",
+                    q: "Sông ngòi nước ta có",
+                    correct: "chế độ nước theo mùa.",
+                    distractors: ["nhiều nước quanh năm.", "ít nước quanh năm.", "rất ít các phụ lưu."]
+                },
+                {
+                    id: "P1_03",
+                    q: "Khối khí nhiệt đới ẩm Bắc Ấn Độ Dương làm cho khí hậu vùng đồng bằng Nam Bộ nước ta có",
+                    correct: "mưa lớn vào đầu mùa hạ.",
+                    distractors: ["lượng bức xạ Mặt Trời lớn.", "hai mùa khác nhau rõ rệt.", "mưa nhiều vào thu đông."]
+                },
+                {
+                    id: "P1_04",
+                    q: "Đặc điểm nổi bật của địa hình miền Bắc và Đông Bắc Bắc Bộ là có",
+                    correct: "hệ thống các cánh cung núi.",
+                    distractors: ["các cao nguyên đất xám lớn.", "các cao nguyên đất đỏ rộng.", "các dải núi cao và đồ sộ."]
+                },
+                {
+                    id: "P1_05",
+                    q: "Phát biểu nào sau đây đúng với đặc điểm sông ngòi miền Tây Bắc và Bắc Trung Bộ?",
+                    correct: "Chủ yếu hướng tây bắc - đông nam.",
+                    distractors: ["Đều là các sông ngắn và dốc.", "Sông ngòi nhiều nước quanh năm.", "Chủ yếu có hướng vòng cung."]
+                },
+                {
+                    id: "P1_06",
+                    q: "Cảnh quan thiên nhiên điển hình ở miền Nam Trung Bộ và Nam Bộ là",
+                    correct: "rừng cận xích đạo gió mùa.",
+                    distractors: ["rừng ôn đới gió mùa.", "rừng cận nhiệt đới.", "cây bụi gai và xa van."]
+                },
+                {
+                    id: "P1_07",
+                    q: "Phát biểu nào sau đây là biểu hiện của sự suy giảm tài nguyên đất ở nước ta?",
+                    correct: "Nhiều nơi đất bị giảm độ phì.",
+                    distractors: ["Diện tích đất nông nghiệp chiếm đa số.", "Gồm nhiều loại đất khác nhau.", "Chất lượng khác nhau giữa các loại đất."]
+                },
+                {
+                    id: "P1_08",
+                    q: "Phát biểu nào sau đây đúng với tài nguyên rừng của nước ta trong những năm gần đây?",
+                    correct: "Chất lượng rừng chưa phục hồi hoàn toàn.",
+                    distractors: ["Diện tích rừng tự nhiên tăng nhanh.", "Diện tích rừng giàu chiếm tỉ lệ lớn.", "Tổng diện tích rừng đang giảm rất nhanh."]
+                },
+                {
+                    id: "P1_09",
+                    q: "Do tiếp giáp Biển Đông nên nước ta có",
+                    correct: "tổng lượng mưa lớn, độ ẩm không khí cao.",
+                    distractors: ["hai lần Mặt Trời lên thiên đỉnh trong năm.", "gió mùa Đông Bắc hoạt động ở mùa đông.", "một mùa có mưa nhiều, một mùa mưa ít."]
+                },
+                {
+                    id: "P1_10",
+                    q: "Khí hậu nhiệt đới ẩm gió mùa với lượng nhiệt ẩm cao mang lại thuận lợi chủ yếu nào sau đây cho sản xuất nông nghiệp nước ta?",
+                    correct: "tiến hành nông nghiệp quanh năm, tăng vụ xen canh.",
+                    distractors: ["cơ giới hóa đồng bộ, hình thành vùng chuyên canh.", "bảo quản nông sản dễ dàng, hạn chế các dịch bệnh.", "đa dạng hóa sản phẩm, mở rộng diện tích canh tác."]
+                },
+                {
+                    id: "P1_11",
+                    q: "Điểm khác biệt về khí hậu của Nam Bộ so với vùng ven biển Nam Trung Bộ là",
+                    correct: "mùa mưa sớm hơn.",
+                    distractors: ["mùa mưa ngắn hơn.", "khí hậu cận xích đạo.", "nóng quanh năm."]
+                },
+                {
+                    id: "P1_12",
+                    q: "Nguyên nhân nào sau đây là chủ yếu dẫn đến sự suy giảm tài nguyên thiên nhiên nước ta?",
+                    correct: "Khai thác quá mức.",
+                    distractors: ["Tình trạng du canh, du cư.", "Công nghệ khai thác lạc hậu.", "Chiến tranh tàn phá."]
+                },
+                {
+                    id: "P1_13",
+                    q: "Cho bảng số liệu:" + buildMonthlyTable(
+                        "Nhiệt độ không khí trung bình các tháng tại trạm quan trắc Vinh, năm 2024",
+                        "Đơn vị: °C",
+                        [{ label: "Nhiệt độ", values: ["19,4", "20,5", "22,0", "29,1", "29,2", "31,7", "30,5", "31,1", "28,2", "25,5", "22,8", "18,8"] }],
+                        "Nguồn: Cục thống kê, năm 2025"
+                    ) + "Theo bảng số liệu, nhận xét nào sau đây đúng với nhiệt độ không khí trung bình các tháng tại trạm quan trắc Vinh, năm 2024?",
+                    correct: "Nhiệt độ tháng cao nhất gấp hơn 1,6 lần tháng thấp nhất.",
+                    distractors: [
+                        "Nhiệt độ trung bình năm trên 30°C.",
+                        "Biên độ nhiệt độ năm dưới 10°C.",
+                        "Có một mùa đông lạnh kéo dài tới 3 tháng (dưới 18°C)."
+                    ]
+                },
+                {
+                    id: "P1_14",
+                    q: "Cho bảng số liệu:" + buildMonthlyTable(
+                        "Lượng mưa các tháng tại trạm quan trắc Lai Châu, năm 2024",
+                        "Đơn vị: mm",
+                        [{ label: "Lượng mưa", values: ["185,2", "44,5", "69,1", "27,7", "383,9", "541,8", "395,4", "362,6", "164,7", "148,1", "4,4", "21,9"] }],
+                        "Nguồn: Cục thống kê, năm 2025"
+                    ) + "Theo bảng số liệu, nhận xét nào sau đây đúng với lượng mưa các tháng tại trạm quan trắc Lai Châu, năm 2024?",
+                    correct: "Tổng lượng mưa năm 2024 là 2349,3 mm.",
+                    distractors: [
+                        "Tháng 6 có lượng mưa nhỏ nhất.",
+                        "Lượng mưa đều, ít có sự phân hóa trong năm.",
+                        "Mưa nhiều chủ yếu vào mùa đông."
+                    ]
+                },
+                {
+                    id: "P1_15",
+                    q: "Cho bảng số liệu:" + buildComparisonTable(
+                        "Tổng số giờ nắng ở một số địa điểm nước ta, năm 2020 và năm 2024",
+                        "Đơn vị: giờ",
+                        ["Địa điểm / Năm", "2020", "2024"],
+                        [
+                            { label: "Tuyên Quang", values: ["1503,6", "1420,2"] },
+                            { label: "Huế", values: ["2120,5", "1870,0"] },
+                            { label: "Cà Mau", values: ["2083,8", "1946,1"] }
+                        ],
+                        "Nguồn: Cục Thống kê Việt Nam, năm 2025"
+                    ) + "Theo bảng số liệu trên, nhận xét nào sau đây đúng với tổng số giờ nắng của một số địa điểm nước ta?",
+                    correct: "Tổng số giờ nắng năm 2024 tăng dần từ Bắc vào Nam.",
+                    distractors: [
+                        "Tổng số giờ nắng năm 2020 giảm dần từ Bắc vào Nam.",
+                        "Năm 2024 so với năm 2020, tổng số giờ nắng ở Tuyên Quang giảm nhiều hơn ở Huế.",
+                        "Năm 2024 so với năm 2020, tổng số giờ nắng ở Cà Mau giảm ít hơn ở Tuyên Quang."
+                    ]
+                },
+                {
+                    id: "P1_16",
+                    q: "Cho bảng số liệu:" + buildComparisonTable(
+                        "Tổng lượng mưa tại một số trạm quan trắc nước ta, năm 2020 và năm 2024",
+                        "Đơn vị: mm",
+                        ["Trạm / Năm", "2020", "2024"],
+                        [
+                            { label: "Sơn La", values: ["1194,3", "1758,5"] },
+                            { label: "Nha Trang", values: ["1225,8", "955,5"] }
+                        ],
+                        "Nguồn: Cục Thống kê Việt Nam, năm 2025"
+                    ) + "Căn cứ vào bảng số liệu trên, hãy cho biết nhận xét nào sau đây đúng với tổng lượng mưa tại trạm quan trắc Sơn La và Nha Trang?",
+                    correct: "Năm 2024, Sơn La có tổng lượng mưa cao hơn ở Nha Trang.",
+                    distractors: [
+                        "Năm 2020, Nha Trang có tổng lượng mưa thấp hơn Sơn La.",
+                        "Năm 2024 so với năm 2020, tổng lượng mưa ở Nha Trang và Sơn La đều giảm.",
+                        "Năm 2024 so với năm 2020, tổng lượng mưa ở Nha Trang và Sơn La đều tăng."
+                    ]
+                },
+                {
+                    id: "P1_17",
+                    q: "Để bảo vệ tài nguyên đất nông nghiệp ở các đồng bằng của nước ta cần",
+                    correct: "chống suy thoái và ô nhiễm đất.",
+                    distractors: ["áp dụng biện pháp nông lâm kết hợp.", "ngăn chặn nạn du canh, du cư.", "thực hiện kĩ thuật canh tác trên đất dốc."]
+                },
+                {
+                    id: "P1_18",
+                    q: "Giải pháp nào sau đây là chủ yếu để giảm thiểu ô nhiễm không khí tại các đô thị lớn?",
+                    correct: "Kiểm soát nguồn khí thải từ phương tiện.",
+                    distractors: ["Tăng cường việc đốt chất thải rắn sinh hoạt.", "Di dời toàn bộ dân cư ra khu vực ngoại ô.", "Xây dựng thêm nhiều tòa nhà cao tầng."]
+                },
+
+                // --- ĐỀ 2 (Câu 19 -> 36) ---
+                {
+                    id: "P1_19",
+                    q: "Phát biểu nào sau đây đúng với tự nhiên miền Nam Trung Bộ và Nam Bộ?",
+                    correct: "Địa hình có các khối núi và cao nguyên lớn.",
+                    distractors: ["Sông ngòi thưa thớt, chế độ nước rất ổn định.", "Thành phần sinh vật chủ yếu là loài cận nhiệt.", "Nhiều loại tài nguyên khoáng sản nhất nước ta."]
+                },
+                {
+                    id: "P1_20",
+                    q: "Phát biểu nào sau đây là biểu hiện của sự suy giảm tài nguyên đất ở nước ta?",
+                    correct: "Nhiều nơi đất bị xói mòn, rửa trôi.",
+                    distractors: ["Diện tích đất chưa sử dụng còn ít.", "Đất có nhiều nguồn gốc khác nhau.", "Tài nguyên đất phân bố không đều."]
+                },
+                {
+                    id: "P1_21",
+                    q: "Gió mùa đông bắc thổi vào nước ta xuất phát từ",
+                    correct: "áp cao Xi-bia.",
+                    distractors: ["biển Đông.", "Ấn Độ Dương.", "vùng núi cao."]
+                },
+                {
+                    id: "P1_22",
+                    q: "Sông ngòi nước ta chủ yếu có hướng chảy nào sau đây?",
+                    correct: "Tây Bắc - Đông Nam.",
+                    distractors: ["Đông Bắc - Tây Nam.", "Tây - Đông.", "Đông - Tây."]
+                },
+                {
+                    id: "P1_23",
+                    q: "Phát biểu nào sau đây đúng với đặc điểm địa hình miền Tây Bắc và Bắc Trung Bộ?",
+                    correct: "Có dải đồng bằng nhỏ hẹp ven biển.",
+                    distractors: ["Chủ yếu là đồi núi thấp.", "Núi đều có hướng tây bắc - đông nam.", "Phần lớn là đồng bằng."]
+                },
+                {
+                    id: "P1_24",
+                    q: "Phát biểu nào sau đây đúng với tài nguyên rừng của nước ta trong những năm gần đây?",
+                    correct: "Tổng diện tích rừng có xu hướng tăng.",
+                    distractors: ["Diện tích rừng trồng chiếm chủ yếu.", "Tỉ lệ che phủ rừng giảm rất nhanh.", "Chất lượng rừng phục hồi hoàn toàn."]
+                },
+                {
+                    id: "P1_25",
+                    q: "Gió phơn Tây Nam làm cho khí hậu vùng đồng bằng ven biển Trung Bộ nước ta có",
+                    correct: "thời tiết đầu hạ khô nóng.",
+                    distractors: ["mưa nhiều vào thu đông.", "lượng bức xạ Mặt Trời lớn.", "hai mùa khác nhau rõ rệt."]
+                },
+                {
+                    id: "P1_26",
+                    q: "Đặc trưng của khí hậu miền Bắc và Đông Bắc Bắc Bộ là",
+                    correct: "có một mùa đông lạnh.",
+                    distractors: ["nóng quanh năm.", "lạnh quanh năm.", "khí hậu rất ít phân hóa."]
+                },
+                {
+                    id: "P1_27",
+                    q: "Nguồn gây ô nhiễm môi trường ở nước ta hiện nay chủ yếu xuất phát từ",
+                    correct: "phát triển công nghiệp và đô thị hóa.",
+                    distractors: ["các khu kinh tế ven biển và hải đảo.", "sản xuất nông nghiệp và làng nghề.", "các hoạt động du lịch và thủy sản."]
+                },
+                {
+                    id: "P1_28",
+                    q: "Tính chất thất thường của thiên nhiên nhiệt đới ẩm gió mùa nước ta gây khó khăn chủ yếu cho hoạt động nào sau đây trong sản xuất nông nghiệp?",
+                    correct: "Bố trí lịch thời vụ và quy hoạch cây trồng.",
+                    distractors: ["Khai thác và chế biến các loại nông sản.", "Xây dựng hệ thống kênh mương thủy lợi.", "Bảo dưỡng máy móc và thiết bị công nghệ."]
+                },
+                {
+                    id: "P1_29",
+                    q: "Điểm khác biệt về khí hậu của phần lãnh thổ phía Bắc so với phần lãnh thổ phía Nam nước ta là",
+                    correct: "gió mùa đông bắc tác động mạnh hơn.",
+                    distractors: ["nhiệt độ trung bình năm cao hơn.", "biên độ nhiệt độ năm nhỏ hơn.", "mùa khô kéo dài và sâu sắc hơn."]
+                },
+                {
+                    id: "P1_30",
+                    q: "Vị trí địa lí đã làm cho tự nhiên nước ta",
+                    correct: "phân hóa theo nhiều quy luật.",
+                    distractors: ["mang tính chất ôn đới gió mùa.", "ít có sự thay đổi theo không gian.", "ít chịu ảnh hưởng của thiên tai."]
+                },
+                {
+                    id: "P1_31",
+                    q: "Việc áp dụng kĩ thuật làm ruộng bậc thang ở vùng đồi núi nước ta hiện nay chủ yếu nhằm",
+                    correct: "hạn chế xói mòn và phát triển sản xuất.",
+                    distractors: ["thay thế hoàn toàn cây trồng lâu năm.", "tận dụng tối đa nguồn nước từ các sông.", "mở rộng quy mô các khu công nghiệp."]
+                },
+                {
+                    id: "P1_32",
+                    q: "Cho bảng số liệu:" + buildComparisonTable(
+                        "Tổng lượng mưa tại một số trạm quan trắc nước ta, năm 2020 và năm 2024",
+                        "Đơn vị: mm",
+                        ["Trạm / Năm", "2020", "2024"],
+                        [
+                            { label: "Bãi Cháy", values: ["1896,7", "3270,8"] },
+                            { label: "Vũng Tàu", values: ["1423,9", "1637,3"] }
+                        ],
+                        "Nguồn: Cục Thống kê Việt Nam, năm 2025"
+                    ) + "Căn cứ vào bảng số liệu trên, hãy cho biết nhận xét nào sau đây đúng với tổng lượng mưa tại trạm quan trắc Bãi Cháy và Vũng Tàu?",
+                    correct: "Năm 2024 so với năm 2020, tổng lượng mưa ở Bãi Cháy và Vũng Tàu đều tăng.",
+                    distractors: [
+                        "Năm 2020, Bãi Cháy có tổng lượng mưa thấp hơn Vũng Tàu.",
+                        "Năm 2024, Vũng Tàu có tổng lượng mưa cao hơn Bãi Cháy.",
+                        "Năm 2024 so với năm 2020, tổng lượng mưa ở Bãi Cháy và Vũng Tàu đều giảm."
+                    ]
+                },
+                {
+                    id: "P1_33",
+                    q: "Cho bảng số liệu:" + buildMonthlyTable(
+                        "Nhiệt độ không khí trung bình các tháng tại trạm quan trắc Nha Trang, năm 2024",
+                        "Đơn vị: °C",
+                        [{ label: "Nhiệt độ", values: ["25,3", "26,0", "27,2", "29,3", "30,2", "29,8", "29,0", "29,6", "28,8", "27,9", "26,9", "25,3"] }],
+                        "Nguồn: Cục Thống kê Việt Nam, năm 2025"
+                    ) + "Theo bảng số liệu, nhận xét nào sau đây đúng với nhiệt độ không khí trung bình các tháng tại trạm quan trắc Nha Trang, năm 2024?",
+                    correct: "Nhiệt độ cao quanh năm, không tháng nào là mùa đông lạnh.",
+                    distractors: [
+                        "Nhiệt độ trung bình năm dưới 25°C.",
+                        "Biên độ nhiệt độ năm trên 15°C.",
+                        "Nhiệt độ tháng cao nhất gấp hơn 2 lần của tháng thấp nhất."
+                    ]
+                },
+                {
+                    id: "P1_34",
+                    q: "Cho bảng số liệu:" + buildMonthlyTable(
+                        "Lượng mưa các tháng tại trạm quan trắc Đà Nẵng, năm 2024",
+                        "Đơn vị: mm",
+                        [{ label: "Lượng mưa", values: ["38,3", "8,2", "0,9", "4,1", "205,5", "27,7", "164,7", "56,9", "370,0", "681,7", "608,9", "443,8"] }],
+                        "Nguồn: Cục thống kê, năm 2025"
+                    ) + "Theo bảng số liệu, nhận xét nào sau đây đúng với lượng mưa các tháng tại trạm quan trắc Đà Nẵng, năm 2024?",
+                    correct: "Tổng lượng mưa năm 2024 là 2610,7 mm.",
+                    distractors: [
+                        "Tháng 10 có lượng mưa nhỏ nhất.",
+                        "Lượng mưa đều, ít có sự phân hóa trong năm.",
+                        "Mưa nhiều chủ yếu vào đầu mùa hạ."
+                    ]
+                },
+                {
+                    id: "P1_35",
+                    q: "Trồng rừng ngập mặn ở các vùng ven biển nước ta hiện nay có ý nghĩa chủ yếu để",
+                    correct: "giảm nhẹ tác động của biến đổi khí hậu.",
+                    distractors: [
+                        "mở rộng tối đa diện tích đất ở ven biển.",
+                        "khai thác triệt để nguồn lợi hải sản biển.",
+                        "thay thế hoàn toàn hệ thống đê ven biển."
+                    ]
+                },
+                {
+                    id: "P1_36",
+                    q: "Cho bảng số liệu:" + buildComparisonTable(
+                        "Tổng số giờ nắng ở một số địa điểm nước ta, năm 2020 và năm 2024",
+                        "Đơn vị: Giờ",
+                        ["Địa điểm / Năm", "2020", "2024"],
+                        [
+                            { label: "Hà Nội (Láng)", values: ["1319,5", "1277,2"] },
+                            { label: "Đà Nẵng", values: ["2219,2", "2079,7"] },
+                            { label: "Vũng Tàu", values: ["2683,5", "2722,7"] }
+                        ],
+                        "Nguồn: Cục Thống kê Việt Nam, năm 2025"
+                    ) + "Theo bảng số liệu trên, nhận xét nào sau đây đúng với tổng số giờ nắng của một số địa điểm nước ta?",
+                    correct: "Năm 2024 so với năm 2020, tổng số giờ nắng ở Vũng Tàu tăng, ở Đà Nẵng giảm.",
+                    distractors: [
+                        "Tổng số giờ nắng năm 2024 giảm dần từ Bắc vào Nam.",
+                        "Tổng số giờ nắng năm 2020 giảm dần từ Bắc vào Nam.",
+                        "Năm 2024 so với năm 2020, tổng số giờ nắng ở Đà Nẵng tăng, ở Hà Nội (Láng) giảm."
+                    ]
+                }
+            ],
+
+            part2: [
+                {
+                    id: "P2_01",
+                    prompt: "Cho thông tin sau:",
+                    passage: "Nằm hoàn toàn trong vùng nội chí tuyến ở bán cầu Bắc và chịu ảnh hưởng sâu sắc của các khối khí hoạt động theo mùa, Việt Nam sở hữu thiên nhiên mang tính chất nhiệt đới ẩm gió mùa điển hình. Vị trí tiếp giáp Biển Đông rộng lớn cùng với sự giao thoa của các luồng di cư sinh vật từ nhiều hướng đã tạo nên nguồn tài nguyên thiên nhiên phong phú và tính đa dạng sinh học cao.",
+                    items: [
+                        { text: "Vị trí nằm trong vùng nội chí tuyến bán cầu Bắc quy định tính chất nhiệt đới của thiên nhiên nước ta.", answer: true },
+                        { text: "Sự kết hợp giữa vị trí nội chí tuyến và tác động của Biển Đông giúp thiên nhiên nước ta giữ được độ ẩm cao, không bị khô hạn như một số khu vực cùng vĩ độ ở Bắc Phi.", answer: true },
+                        { text: "Tài nguyên sinh học đa dạng là một điều kiện thuận lợi để nước ta đa dạng hóa cơ cấu giống cây trồng vật nuôi.", answer: true },
+                        { text: "Do nằm hoàn toàn trong vùng khí hậu nhiệt đới gió mùa nên khí hậu của nước ta có sự phân hóa sâu sắc với một mùa hạ nóng ẩm và một mùa đông lạnh, khô.", answer: false }
+                    ]
+                },
+                {
+                    id: "P2_02",
+                    prompt: "Cho thông tin sau:",
+                    passage: "Thiên nhiên nhiệt đới ẩm gió mùa ở nước ta thể hiện rõ rệt qua các thành phần tự nhiên. Khí hậu có nền nhiệt ẩm cao, lượng mưa lớn và chịu tác động sâu sắc của các khối khí hoạt động theo mùa. Quá trình phong hóa, xâm thực diễn ra mạnh mẽ ở vùng đồi núi, cung cấp lượng phù sa dồi dào bồi tụ nên các đồng bằng châu thổ rộng lớn.",
+                    items: [
+                        { text: "Quá trình phong hóa hóa học diễn ra mạnh mẽ ở vùng đồi núi đá vôi nước ta.", answer: true },
+                        { text: "Mạng lưới sông ngòi nước ta có đặc điểm ít nước, nghèo phù sa và dòng chảy thay đổi theo mùa.", answer: false },
+                        { text: "Quá trình feralit là quá trình hình thành đất đặc trưng ở vùng đồi núi thấp của nước ta.", answer: true },
+                        { text: "Khí hậu nhiệt đới ẩm gió mùa có sự phân hóa tạo điều kiện thuận lợi để nông nghiệp nước ta đa dạng hóa cơ cấu cây trồng, vật nuôi và cơ cấu mùa vụ.", answer: true }
+                    ]
+                },
+                {
+                    id: "P2_03",
+                    prompt: "Cho bảng số liệu:",
+                    passage: buildComparisonTable(
+                        "Mực nước một số sông của nước ta, năm 2024",
+                        "Đơn vị: Cm",
+                        ["Sông - Trạm", "Cao nhất", "Thấp nhất"],
+                        [
+                            { label: "Sông Đà - Trạm Lai Châu", values: ["21526", "19705"] },
+                            { label: "Sông Thao - Trạm Yên Bái", values: ["3573", "2294"] },
+                            { label: "Sông Cả - Trạm Dừa", values: ["2220", "1330"] }
+                        ],
+                        "Nguồn: Cục Thống kê Việt Nam, năm 2025"
+                    ),
+                    isHtmlPassage: true,
+                    items: [
+                        { text: "Chênh lệch mực nước cao nhất và thấp nhất của sông Đà - Trạm Lai Châu là lớn nhất.", answer: true },
+                        { text: "Mực nước của sông Cả - Trạm Dừa luôn cao nhất.", answer: false },
+                        { text: "Ở sông Thao - Trạm Yên Bái, mực nước thấp nhất giảm hơn 35% so với mực nước cao nhất.", answer: true },
+                        { text: "Biểu đồ tròn là dạng biểu đồ thích hợp nhất để so sánh mực nước cao nhất và mực nước thấp nhất của các sông trên.", answer: false }
+                    ]
+                },
+                {
+                    id: "P2_04",
+                    prompt: "Cho thông tin sau:",
+                    passage: "Tài nguyên thiên nhiên ở nước ta phong phú nhưng đang chịu áp lực lớn từ hoạt động phát triển kinh tế. Sự suy giảm tài nguyên sinh vật biểu hiện rõ qua sự thu hẹp diện tích rừng tự nhiên và suy giảm đa dạng sinh học. Nhiều loài thực vật và động vật hoang dã đối mặt với nguy cơ tuyệt chủng, làm ảnh hưởng nghiêm trọng đến cân bằng sinh thái.",
+                    items: [
+                        { text: "Sự suy giảm tài nguyên sinh vật ở nước ta biểu hiện rõ rệt qua sự giảm sút diện tích rừng tự nhiên và suy giảm đa dạng sinh học.", answer: true },
+                        { text: "Khai thác quá mức, đốt rừng làm nương rẫy là những nguyên nhân do con người làm suy giảm tài nguyên sinh vật.", answer: true },
+                        { text: "Tổng diện tích rừng có xu hướng phục hồi và phần lớn rừng mới trồng có đa dạng sinh học cao.", answer: false },
+                        { text: "Việc rừng tự nhiên bị suy giảm làm giảm khả năng giữ nước của thảm thực vật, dẫn đến tình trạng cạn kiệt nguồn nước ngầm và gia tăng nguy cơ lũ lụt ở hạ lưu.", answer: true }
+                    ]
+                },
+                {
+                    id: "P2_05",
+                    prompt: "Cho bảng số liệu:",
+                    passage: buildComparisonTable(
+                        "Mực nước một số sông của nước ta, năm 2024",
+                        "Đơn vị: Cm",
+                        ["Sông - Trạm", "Cao nhất", "Thấp nhất"],
+                        [
+                            { label: "Sông Lô - Trạm Tuyên Quang", values: ["2773", "1130"] },
+                            { label: "Sông Hồng - Trạm Sơn Tây", values: ["1351", "1"] },
+                            { label: "Sông Mã - Trạm Cẩm Thuỷ", values: ["2030", "1122"] }
+                        ],
+                        "Nguồn: Cục Thống kê Việt Nam, năm 2025"
+                    ),
+                    isHtmlPassage: true,
+                    items: [
+                        { text: "Chênh lệch mực nước cao nhất và thấp nhất của sông Hồng - Trạm Sơn Tây là lớn nhất.", answer: false },
+                        { text: "Mực nước của sông Lô - Trạm Tuyên Quang luôn thấp nhất.", answer: false },
+                        { text: "Ở sông Mã - Trạm Cẩm Thủy, mực nước thấp nhất giảm hơn 50% so với mực nước cao nhất.", answer: false },
+                        { text: "Biểu đồ cột là dạng biểu đồ thích hợp nhất để so sánh mực nước cao nhất và mực nước thấp nhất của các sông trên.", answer: true }
+                    ]
+                },
+                {
+                    id: "P2_06",
+                    prompt: "Cho thông tin sau:",
+                    passage: "Hệ sinh thái rừng nhiệt đới ẩm gió mùa là cảnh quan tiêu biểu của thiên nhiên nước ta với thành phần loài sinh vật phong phú và năng suất sinh học cao. Sự phân mùa khí hậu cùng với tính thất thường của thời tiết tác động trực tiếp đến các hoạt động canh tác nông nghiệp, giao thông vận tải và đời sống của người dân.",
+                    items: [
+                        { text: "Thành phần loài thực vật và động vật nhiệt đới chiếm ưu thế trong các hệ sinh thái rừng ở nước ta.", answer: true },
+                        { text: "Khí hậu nước ta có sự phân hóa đa dạng cả theo không gian và theo thời gian.", answer: true },
+                        { text: "Khí hậu nhiệt đới ẩm gió mùa làm cho chế độ nước sông ngòi ở Việt Nam điều hòa quanh năm.", answer: false },
+                        { text: "Độ ẩm không khí cao kết hợp với tính chất thất thường của thời tiết gây khó khăn cho việc bảo quản máy móc, nông sản và làm tăng nguy cơ dịch bệnh trong sản xuất.", answer: true }
+                    ]
+                },
+                {
+                    id: "P2_07",
+                    prompt: "Cho thông tin sau:",
+                    passage: "Tình trạng ô nhiễm môi trường ở nước ta đang là vấn đề cấp bách, tập trung chủ yếu ở các đô thị lớn, khu công nghiệp và lưu vực sông. Môi trường nước ở nhiều đoạn sông, kênh rạch bị ô nhiễm do chất thải sinh hoạt và công nghiệp chưa được xử lí triệt để. Môi trường không khí ở các đô thị gia tăng ô nhiễm bụi, tác động tiêu cực đến sức khỏe cộng đồng.",
+                    items: [
+                        { text: "Ô nhiễm môi trường nước diễn ra ở một số đoạn sông, kênh rạch của nước ta.", answer: true },
+                        { text: "Khí thải từ các phương tiện giao thông và hoạt động sản xuất công nghiệp là nguồn gây ô nhiễm không khí phổ biến tại các đô thị.", answer: true },
+                        { text: "Tình trạng ô nhiễm môi trường ở nước ta hiện nay chỉ xảy ra tại các thành phố lớn.", answer: false },
+                        { text: "Tình trạng ô nhiễm nước sông kéo dài không chỉ làm suy giảm nguồn nước sạch phục vụ sinh hoạt mà còn làm suy thoái các hệ sinh thái thủy sinh và ảnh hưởng đến việc nuôi trồng thủy sản.", answer: true }
+                    ]
+                },
+                {
+                    id: "P2_08",
+                    prompt: "Cho thông tin sau:",
+                    passage: "Lãnh thổ Việt Nam là một khối thống nhất và toàn vẹn, bao gồm vùng đất, vùng biển và vùng trời. Với bờ biển kéo dài và vùng biển rộng lớn bao gồm hàng nghìn đảo và quần đảo, Việt Nam có vị trí đặc biệt quan trọng trên các tuyến đường hàng hải và hàng không quốc tế. Vị trí này mở ra nhiều cơ hội phát triển kinh tế biển nhưng cũng đặt ra những thách thức trong việc bảo vệ chủ quyền quốc gia.",
+                    items: [
+                        { text: "Vùng biển nước ta bao gồm các bộ phận là nội thủy, lãnh hải, vùng tiếp giáp lãnh hải, vùng đặc quyền kinh tế và thềm lục địa.", answer: true },
+                        { text: "Vị trí tiếp giáp Biển Đông và nằm trên ngã tư đường hàng hải, hàng không quốc tế tạo điều kiện thuận lợi cho nước ta thúc đẩy hội nhập và giao thương quốc tế.", answer: true },
+                        { text: "Nhằm phát huy tối đa lợi thế vị trí địa lí trong bối cảnh hội nhập, việc kết hợp chặt chẽ giữa phát triển tổng hợp kinh tế biển với tăng cường quốc phòng, an ninh trên các vùng biển, đảo có ý nghĩa chiến lược.", answer: true },
+                        { text: "Do có đường bờ biển kéo dài và vùng biển rộng lớn, các tỉnh nước ta đều có thế mạnh trực tiếp về khai thác hải sản và phát triển du lịch biển.", answer: false }
+                    ]
+                }
+            ],
+
+            part3: [
+                {
+                    id: "P3_01",
+                    q: "Đường bờ biển nước ta dài 3260 km, đường biên giới trên đất liền dài 4510 km. Hãy cho biết tỉ lệ đường bờ biển so với đường biên giới trên đất liền nước ta là bao nhiêu phần trăm (làm tròn kết quả đến một chữ số thập phân).",
+                    answer: "72,3",
+                    unit: "%",
+                    explanation: "Tỉ lệ = (3260 / 4510) × 100 ≈ 72,28% → làm tròn 1 chữ số thập phân là 72,3."
+                },
+                {
+                    id: "P3_02",
+                    q: "Số giờ nắng tại trạm quan trắc Sơn La năm 2020 và năm 2024 lần lượt là 2226,2 giờ và 2114,4 giờ. Hãy cho biết, năm 2024 so với năm 2020, số giờ nắng tại trạm quan trắc Sơn La giảm bao nhiêu giờ (làm tròn kết quả đến hàng đơn vị).",
+                    answer: "112",
+                    unit: "giờ",
+                    explanation: "Mức giảm = 2226,2 - 2114,4 = 111,8 giờ → làm tròn đến hàng đơn vị là 112."
+                },
+                {
+                    id: "P3_03",
+                    q: "Theo quy luật đai cao, cứ lên cao 100m thì nhiệt độ không khí sẽ giảm 0,6°C. Khi nhiệt độ không khí ở chân núi Phu Hoạt là 22°C thì tại độ cao 1000 m sườn đón gió của đỉnh núi này có nhiệt độ là bao nhiêu °C (làm tròn kết quả đến hàng đơn vị).",
+                    answer: "16",
+                    unit: "°C",
+                    explanation: "Lên cao 1000m nhiệt độ giảm: (1000 / 100) × 0,6 = 6°C. Nhiệt độ tại độ cao 1000m = 22 - 6 = 16°C."
+                },
+                {
+                    id: "P3_04",
+                    q: "Năm 2024, diện tích đất nông nghiệp của nước ta là 28147,3 nghìn ha, trong đó đất trồng cây hàng năm là 6810,1 nghìn ha. Hãy cho biết đất trồng cây hàng năm chiếm bao nhiêu phần trăm trong tổng diện tích đất nông nghiệp của nước ta năm 2024 (làm tròn kết quả đến một chữ số thập phân).",
+                    answer: "24,2",
+                    unit: "%",
+                    explanation: "Tỉ trọng = (6810,1 / 28147,3) × 100 ≈ 24,19% → làm tròn 1 chữ số thập phân là 24,2."
+                },
+                {
+                    id: "P3_05",
+                    q: "Cho bảng số liệu:" + buildMonthlyTable(
+                        "Nhiệt độ không khí trung bình các tháng trong năm tại Hà Nội năm 2024",
+                        "Đơn vị: °C",
+                        [{ label: "Nhiệt độ", values: ["18,4", "19,6", "22,1", "28,3", "28,8", "30,9", "30,4", "30,4", "29,2", "27,6", "25,2", "19,6"] }],
+                        "Nguồn: Cục Thống kê Việt Nam, năm 2025"
+                    ) + "Căn cứ vào bảng số liệu trên, hãy cho biết nhiệt độ trung bình năm tại Hà Nội năm 2024 là bao nhiêu °C (làm tròn kết quả đến một chữ số thập phân).",
+                    answer: "25,9",
+                    unit: "°C",
+                    explanation: "Tổng nhiệt độ 12 tháng = 310,5°C. Nhiệt độ trung bình năm = 310,5 / 12 = 25,875°C → làm tròn là 25,9."
+                },
+                {
+                    id: "P3_06",
+                    q: "Cho bảng số liệu:" + buildMonthlyTable(
+                        "Lượng mưa các tháng ở Nha Trang và Đà Lạt năm 2025",
+                        "Đơn vị: mm",
+                        [
+                            { label: "Đà Lạt", values: ["8,0", "6,3", "8,7", "110,5", "231,3", "256,0", "124,4", "302,1", "418,3", "205,6", "352,3", "147,8"] },
+                            { label: "Nha Trang", values: ["37,7", "62,7", "39,9", "5,0", "46,9", "19,8", "5,0", "80,2", "233,6", "423,2", "625,0", "106,1"] }
+                        ],
+                        "Nguồn: Cục Thống kê Việt Nam, năm 2025"
+                    ) + "Căn cứ vào bảng số liệu trên, hãy cho biết chênh lệch tổng lượng mưa năm 2025 của Đà Lạt và Nha Trang là bao nhiêu mm (làm tròn kết quả đến hàng đơn vị).",
+                    answer: "486",
+                    unit: "mm",
+                    explanation: "Tổng lượng mưa Đà Lạt = 2171,3 mm; Nha Trang = 1685,1 mm. Chênh lệch = 2171,3 - 1685,1 = 486,2 mm → làm tròn 486."
+                },
+                {
+                    id: "P3_07",
+                    q: "Cho bảng số liệu:" + buildMonthlyTable(
+                        "Nhiệt độ không khí trung bình các tháng tại Vũng Tàu, năm 2024",
+                        "Đơn vị: °C",
+                        [{ label: "Nhiệt độ (°C)", values: ["26,9", "27,6", "28,3", "30,1", "30,8", "29,4", "28,1", "29,2", "28,1", "28,4", "28,4", "27,0"] }],
+                        "Nguồn: Cục Thống kê Việt Nam, năm 2025"
+                    ) + "Căn cứ vào bảng số liệu trên, hãy cho biết nhiệt độ không khí trung bình năm 2024 tại Vũng Tàu là bao nhiêu °C (làm tròn kết quả đến một chữ số thập phân).",
+                    answer: "28,5",
+                    unit: "°C",
+                    explanation: "Tổng nhiệt độ 12 tháng = 342,3°C. Trung bình năm = 342,3 / 12 = 28,525°C → làm tròn là 28,5."
+                },
+                {
+                    id: "P3_08",
+                    q: "Tổng chiều dài đường biên giới trên đất liền của nước ta là 4510 km. Trong đó, đường biên giới của nước ta với Lào dài 2161 km. Hãy cho biết, chiều dài đường biên giới của nước ta với Lào chiếm bao nhiêu phần trăm so với tổng chiều dài đường biên giới trên đất liền của nước ta (làm tròn kết quả đến một chữ số thập phân).",
+                    answer: "47,9",
+                    unit: "%",
+                    explanation: "Tỉ lệ = (2161 / 4510) × 100 ≈ 47,915% → làm tròn 1 chữ số thập phân là 47,9."
+                },
+                {
+                    id: "P3_09",
+                    q: "Năm 2024, diện tích đất sử dụng cho mục đích phi nông nghiệp của nước ta là 4112,2 nghìn ha. Trong đó, diện tích đất ở là 794 nghìn ha. Hãy cho biết diện tích đất ở chiếm bao nhiêu phần trăm tổng diện tích đất sử dụng cho mục đích phi nông nghiệp của nước ta năm 2024 (làm tròn kết quả đến một chữ số thập phân).",
+                    answer: "19,3",
+                    unit: "%",
+                    explanation: "Tỉ lệ = (794 / 4112,2) × 100 ≈ 19,308% → làm tròn 1 chữ số thập phân là 19,3."
+                },
+                {
+                    id: "P3_10",
+                    q: "Cho bảng số liệu:" + buildMonthlyTable(
+                        "Lượng mưa các tháng năm 2024 tại trạm quan trắc Vinh và trạm quan trắc Đà Nẵng",
+                        "Đơn vị: mm",
+                        [
+                            { label: "Vinh", values: ["110,5", "32,1", "55,2", "14,2", "150,1", "60,2", "224,0", "22,2", "882,5", "403,2", "148,5", "43,4"] },
+                            { label: "Đà Nẵng", values: ["38,3", "8,2", "0,9", "4,1", "205,5", "27,7", "164,7", "56,9", "370,0", "681,7", "608,9", "443,8"] }
+                        ],
+                        "Nguồn: Cục Thống kê Việt Nam, năm 2024"
+                    ) + "Căn cứ vào bảng số liệu trên, hãy cho biết chênh lệch tổng lượng mưa năm 2024 của Vinh và Đà Nẵng là bao nhiêu mm (làm tròn kết quả đến hàng đơn vị).",
+                    answer: "465",
+                    unit: "mm",
+                    explanation: "Tổng mưa Đà Nẵng = 2610,7 mm; Tổng mưa Vinh = 2146,1 mm. Chênh lệch = 2610,7 - 2146,1 = 464,6 mm → làm tròn là 465."
+                },
+                {
+                    id: "P3_11",
+                    q: "Số giờ nắng tại trạm quan trắc Bãi Cháy năm 2015 và năm 2024 lần lượt là 1570,7 giờ và 1341,1 giờ. Hãy cho biết, năm 2024 so với năm 2015, số giờ nắng tại trạm quan trắc Bãi Cháy giảm bao nhiêu giờ (làm tròn kết quả đến hàng đơn vị).",
+                    answer: "230",
+                    unit: "giờ",
+                    explanation: "Số giờ nắng giảm = 1570,7 - 1341,1 = 229,6 giờ → làm tròn đến hàng đơn vị là 230."
+                },
+                {
+                    id: "P3_12",
+                    q: "Theo quy luật đai cao, cứ lên cao 100m thì nhiệt độ không khí sẽ giảm 0,6°C. Khi nhiệt độ không khí ở chân núi Mẫu Sơn là 23°C thì tại độ cao 1500 m sườn đón gió của đỉnh núi này có nhiệt độ là bao nhiêu °C (làm tròn kết quả đến hàng đơn vị).",
+                    answer: "14",
+                    unit: "°C",
+                    explanation: "Lên cao 1500m nhiệt độ giảm: (1500 / 100) × 0,6 = 9°C. Nhiệt độ tại độ cao 1500m = 23 - 9 = 14°C."
+                }
+            ]
+        };
+
+        /**************************************************************************
+         * 2. QUẢN LÝ TRẠNG THÁI BÀI THI
+         **************************************************************************/
+        let currentMode = 'standard'; // 'standard' (18-4-6) | 'full' (36-8-12) | 'custom'
+        let examState = {
+            isActive: false,
+            isSubmitted: false,
+            examCode: '0412',
+            durationMinutes: 45,
+            remainingSeconds: 2700,
+            elapsedSeconds: 0,
+            timerInterval: null,
+            showStudyUnderline: false,
+            part1Questions: [],
+            part2Questions: [],
+            part3Questions: [],
+            answersP1: {}, // { qIndex: optIndex }
+            answersP2: {}, // { qIndex: { 0: bool, 1: bool, 2: bool, 3: bool } }
+            answersP3: {}, // { qIndex: string }
+            flaggedP1: {},
+            flaggedP2: {},
+            flaggedP3: {},
+            reviewFilter: 'all'
+        };
+
+        function shuffleArray(arr) {
+            const copy = [...arr];
+            for (let i = copy.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [copy[i], copy[j]] = [copy[j], copy[i]];
+            }
+            return copy;
+        }
+
+        function generateRandomExamCode() {
+            return String(Math.floor(1000 + Math.random() * 9000));
+        }
+
+        /**************************************************************************
+         * 3. XỬ LÝ CHỌN CHẾ ĐỘ THI & THỜI GIAN
+         **************************************************************************/
+        function selectExamMode(mode) {
+            currentMode = mode;
+            const cards = {
+                standard: document.getElementById('modeCardStandard'),
+                full: document.getElementById('modeCardFull'),
+                custom: document.getElementById('modeCardCustom')
+            };
+            const activeStyle = "cursor-pointer rounded-2xl border-2 border-emerald-500 bg-emerald-50/50 dark:bg-emerald-950/20 p-4 transition flex flex-col justify-between gap-2";
+            const inactiveStyle = "cursor-pointer rounded-2xl border-2 border-slate-200 dark:border-slate-700 hover:border-emerald-400 p-4 transition flex flex-col justify-between gap-2";
+
+            Object.keys(cards).forEach(k => {
+                cards[k].className = (k === mode) ? activeStyle : inactiveStyle;
+                cards[k].querySelector('input').checked = (k === mode);
+            });
+
+            const customControls = document.getElementById('customCountControls');
+            if (mode === 'custom') {
+                customControls.classList.remove('hidden');
+                customControls.classList.add('grid');
+            } else {
+                customControls.classList.add('hidden');
+                customControls.classList.remove('grid');
+            }
+        }
+
+        function setDuration(minutes) {
+            document.getElementById('durationInput').value = minutes;
+            document.querySelectorAll('.time-preset').forEach(btn => {
+                if (btn.textContent.startsWith(minutes + 'p')) {
+                    btn.className = "time-preset px-3 py-1.5 rounded-xl text-xs font-bold border-2 border-emerald-500 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300";
+                } else {
+                    btn.className = "time-preset px-3 py-1.5 rounded-xl text-xs font-semibold border border-slate-200 dark:border-slate-700 hover:border-emerald-500";
+                }
+            });
+        }
+
+        /**************************************************************************
+         * 4. KHỞI TẠO ĐỀ THI (ĐẢO CÂU HỎI & ĐẢO ĐÁP ÁN A, B, C, D)
+         **************************************************************************/
+        function startExam() {
+            const errorBox = document.getElementById('setupErrorBox');
+            errorBox.classList.add('hidden');
+
+            let countP1 = 18, countP2 = 4, countP3 = 6;
+            if (currentMode === 'standard') {
+                countP1 = 18;
+                countP2 = 4;
+                countP3 = 6;
+            } else if (currentMode === 'full') {
+                countP1 = GEO_QUESTION_BANK.part1.length; // 36
+                countP2 = GEO_QUESTION_BANK.part2.length; // 8
+                countP3 = GEO_QUESTION_BANK.part3.length; // 12
+            } else {
+                countP1 = Math.min(Math.max(0, parseInt(document.getElementById('customP1Input').value || 0, 10)), GEO_QUESTION_BANK.part1.length);
+                countP2 = Math.min(Math.max(0, parseInt(document.getElementById('customP2Input').value || 0, 10)), GEO_QUESTION_BANK.part2.length);
+                countP3 = Math.min(Math.max(0, parseInt(document.getElementById('customP3Input').value || 0, 10)), GEO_QUESTION_BANK.part3.length);
+                if (countP1 === 0 && countP2 === 0 && countP3 === 0) {
+                    errorBox.textContent = "Vui lòng chọn ít nhất 1 câu hỏi để bắt đầu làm bài!";
+                    errorBox.classList.remove('hidden');
+                    return;
+                }
+            }
+
+            const durationMinutes = Math.max(1, parseInt(document.getElementById('durationInput').value || 45, 10));
+            const doShuffleQuestions = document.getElementById('shuffleQuestionsCb').checked;
+            const doShuffleOptions = document.getElementById('shuffleOptionsCb').checked;
+            const showStudyUnderline = document.getElementById('showUnderlineHintCb').checked;
+
+            // 1. Chuẩn bị Phần I
+            const rawP1 = (doShuffleQuestions ? shuffleArray(GEO_QUESTION_BANK.part1) : [...GEO_QUESTION_BANK.part1]).slice(0, countP1);
+            const preparedP1 = rawP1.map(item => {
+                const opts = [
+                    { text: item.correct, isCorrect: true },
+                    ...item.distractors.map(d => ({ text: d, isCorrect: false }))
+                ];
+                return {
+                    id: item.id,
+                    q: item.q,
+                    options: doShuffleOptions ? shuffleArray(opts) : opts
+                };
+            });
+
+            // 2. Chuẩn bị Phần II
+            const rawP2 = (doShuffleQuestions ? shuffleArray(GEO_QUESTION_BANK.part2) : [...GEO_QUESTION_BANK.part2]).slice(0, countP2);
+            const preparedP2 = rawP2.map(item => {
+                const subItems = item.items.map(s => ({ text: s.text, answer: s.answer }));
+                return {
+                    id: item.id,
+                    prompt: item.prompt,
+                    passage: item.passage,
+                    isHtmlPassage: !!item.isHtmlPassage,
+                    items: doShuffleOptions ? shuffleArray(subItems) : subItems
+                };
+            });
+
+            // 3. Chuẩn bị Phần III
+            const rawP3 = (doShuffleQuestions ? shuffleArray(GEO_QUESTION_BANK.part3) : [...GEO_QUESTION_BANK.part3]).slice(0, countP3);
+            const preparedP3 = rawP3.map(item => ({ ...item }));
+
+            if (examState.timerInterval) clearInterval(examState.timerInterval);
+            examState = {
+                isActive: true,
+                isSubmitted: false,
+                examCode: generateRandomExamCode(),
+                durationMinutes,
+                remainingSeconds: durationMinutes * 60,
+                elapsedSeconds: 0,
+                timerInterval: null,
+                showStudyUnderline,
+                part1Questions: preparedP1,
+                part2Questions: preparedP2,
+                part3Questions: preparedP3,
+                answersP1: {},
+                answersP2: {},
+                answersP3: {},
+                flaggedP1: {},
+                flaggedP2: {},
+                flaggedP3: {},
+                reviewFilter: 'all'
+            };
+
+            // Chuyển giao diện
+            document.getElementById('setupScreen').classList.add('hidden');
+            document.getElementById('examWorkspace').classList.remove('hidden');
+            document.getElementById('resultSummaryPanel').classList.add('hidden');
+            document.getElementById('examHeaderControls').classList.remove('hidden');
+            document.getElementById('examHeaderControls').classList.add('flex');
+            document.getElementById('backToConfigBtn').classList.remove('hidden');
+            document.getElementById('backToConfigBtn').classList.add('flex');
+            document.getElementById('headerSubmitBtn').classList.remove('hidden');
+            document.getElementById('sidebarSubmitBtn').classList.remove('hidden');
+
+            document.getElementById('examCodeDisplay').textContent = examState.examCode;
+            document.getElementById('paperSubInfo').textContent = `Thời gian: ${durationMinutes} phút • P.I (${preparedP1.length} câu) • P.II (${preparedP2.length} câu) • P.III (${preparedP3.length} câu)`;
+            document.getElementById('part1InstructionText').textContent = `Thí sinh trả lời từ câu 1 đến câu ${preparedP1.length}. Mỗi câu hỏi thí sinh chỉ chọn một phương án (0,25 điểm/câu).`;
+
+            renderAllQuestions();
+            renderQuestionPalette();
+            updateProgressCounters();
+            startTimer();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        /**************************************************************************
+         * 5. RENDER CẢ 3 PHẦN (PHẦN I, PHẦN II, PHẦN III) CÓ GẠCH ĐÍCH ĐÁP ÁN ĐÚNG
+         **************************************************************************/
+        const OPTION_LABELS = ['A', 'B', 'C', 'D'];
+        const SUB_ITEM_LABELS = ['a)', 'b)', 'c)', 'd)'];
+
+        function normalizeShortAnswer(val) {
+            if (val === undefined || val === null) return '';
+            return String(val).trim().replace(/\s+/g, '').replace(',', '.');
+        }
+
+        function isShortAnswerCorrect(userVal, targetVal) {
+            const normUser = normalizeShortAnswer(userVal);
+            const normTarget = normalizeShortAnswer(targetVal);
+            if (!normUser) return false;
+            return Number(normUser) === Number(normTarget);
+        }
+
+        function renderAllQuestions() {
+            const p1Wrapper = document.getElementById('part1SectionWrapper');
+            const p2Wrapper = document.getElementById('part2SectionWrapper');
+            const p3Wrapper = document.getElementById('part3SectionWrapper');
+
+            const p1List = document.getElementById('part1QuestionsList');
+            const p2List = document.getElementById('part2QuestionsList');
+            const p3List = document.getElementById('part3QuestionsList');
+
+            p1List.innerHTML = '';
+            p2List.innerHTML = '';
+            p3List.innerHTML = '';
+
+            p1Wrapper.classList.toggle('hidden', examState.part1Questions.length === 0);
+            p2Wrapper.classList.toggle('hidden', examState.part2Questions.length === 0);
+            p3Wrapper.classList.toggle('hidden', examState.part3Questions.length === 0);
+
+            const isSubmitted = examState.isSubmitted;
+            const showUnderline = isSubmitted || examState.showStudyUnderline;
+
+            // ==================== RENDER PHẦN I ====================
+            examState.part1Questions.forEach((qObj, qIndex) => {
+                const userSelected = examState.answersP1[qIndex];
+                const isFlagged = !!examState.flaggedP1[qIndex];
+                const correctIndex = qObj.options.findIndex(o => o.isCorrect);
+                const isCorrect = isSubmitted && userSelected === correctIndex;
+
+                if (isSubmitted) {
+                    if (examState.reviewFilter === 'wrong' && isCorrect) return;
+                    if (examState.reviewFilter === 'flagged' && !isFlagged) return;
+                }
+
+                let statusBadge = '';
+                if (isSubmitted) {
+                    if (userSelected === undefined) {
+                        statusBadge = `<span class="px-2.5 py-1 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-bold">Chưa chọn (0đ)</span>`;
+                    } else if (isCorrect) {
+                        statusBadge = `<span class="px-2.5 py-1 rounded-lg bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 text-xs font-bold"><i class="fa-solid fa-check mr-1"></i>Đúng (+0,25đ)</span>`;
+                    } else {
+                        statusBadge = `<span class="px-2.5 py-1 rounded-lg bg-rose-500/15 text-rose-700 dark:text-rose-300 border border-rose-500/30 text-xs font-bold"><i class="fa-solid fa-xmark mr-1"></i>Sai (0đ)</span>`;
+                    }
+                }
+
+                const optionsHTML = qObj.options.map((opt, optIdx) => {
+                    const isThisSelected = userSelected === optIdx;
+                    let btnStyle = "border-slate-200 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-800/50 hover:border-emerald-400 text-slate-800 dark:text-slate-200";
+                    let badgeStyle = "bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-600";
+                    let feedbackTag = "";
+
+                    // Gạch chân đáp án đúng theo đúng yêu cầu của bạn
+                    const underlineClass = (showUnderline && opt.isCorrect) ? "correct-underline font-bold" : "";
+                    const letterUnderline = (showUnderline && opt.isCorrect) ? "underline decoration-2 underline-offset-2" : "";
+
+                    if (!isSubmitted) {
+                        if (isThisSelected) {
+                            btnStyle = "border-2 border-emerald-500 bg-emerald-50/90 dark:bg-emerald-950/40 text-geo-950 dark:text-emerald-200 font-semibold shadow-xs";
+                            badgeStyle = "bg-emerald-600 text-white font-extrabold border-emerald-600";
+                        }
+                    } else {
+                        if (opt.isCorrect) {
+                            btnStyle = "border-2 border-emerald-500 bg-emerald-50/90 dark:bg-emerald-950/35 text-emerald-950 dark:text-emerald-200 font-semibold";
+                            badgeStyle = "bg-emerald-600 text-white font-extrabold border-emerald-600";
+                            feedbackTag = `<span class="ml-auto text-xs font-bold text-emerald-600 dark:text-emerald-400 shrink-0"><i class="fa-solid fa-circle-check mr-1"></i>Đáp án đúng</span>`;
+                        } else if (isThisSelected && !opt.isCorrect) {
+                            btnStyle = "border-2 border-rose-500 bg-rose-50/80 dark:bg-rose-950/30 text-rose-950 dark:text-rose-200";
+                            badgeStyle = "bg-rose-500 text-white font-extrabold border-rose-500";
+                            feedbackTag = `<span class="ml-auto text-xs font-bold text-rose-600 dark:text-rose-400 shrink-0"><i class="fa-solid fa-circle-xmark mr-1"></i>Bạn chọn</span>`;
+                        } else {
+                            btnStyle = "border-slate-200 dark:border-slate-800 bg-slate-50/40 dark:bg-slate-900/40 opacity-65";
+                        }
+                    }
+
+                    return `
+                        <button type="button"
+                            ${isSubmitted ? 'disabled' : `onclick="selectPart1Answer(${qIndex}, ${optIdx})"`}
+                            class="w-full text-left p-3.5 rounded-xl border transition flex items-center gap-3 ${btnStyle}">
+                            <span class="w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold shrink-0 ${badgeStyle} ${letterUnderline}">
+                                ${OPTION_LABELS[optIdx]}
+                            </span>
+                            <span class="text-sm leading-snug flex-1 ${underlineClass}">${opt.text}</span>
+                            ${feedbackTag}
+                        </button>
+                    `;
+                }).join('');
+
+                const card = document.createElement('div');
+                card.id = `question_p1_${qIndex}`;
+                card.className = `scroll-mt-24 rounded-2xl border p-4 sm:p-5 bg-white dark:bg-slate-900 transition ${
+                    isSubmitted
+                        ? (isCorrect ? 'border-emerald-500/40' : 'border-rose-500/40')
+                        : 'border-slate-200 dark:border-slate-800'
+                }`;
+
+                card.innerHTML = `
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                        <div class="flex items-center gap-2">
+                            <span class="px-3 py-1 rounded-lg bg-geo-700 text-white font-extrabold text-xs sm:text-sm">
+                                Câu ${qIndex + 1}
+                            </span>
+                            <span class="text-xs font-medium text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-lg">
+                                Phần I • Nhiều phương án
+                            </span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            ${statusBadge}
+                            <button type="button" onclick="toggleFlag('p1', ${qIndex})"
+                                class="px-2.5 py-1 rounded-lg text-xs font-semibold border transition flex items-center gap-1 ${
+                                    isFlagged
+                                        ? 'bg-rose-500/15 text-rose-600 dark:text-rose-400 border-rose-500/40'
+                                        : 'bg-slate-100 dark:bg-slate-800 text-slate-500 border-slate-200 dark:border-slate-700 hover:text-rose-500'
+                                }">
+                                <i class="fa-${isFlagged ? 'solid' : 'regular'} fa-flag"></i>
+                                <span class="hidden sm:inline">${isFlagged ? 'Đã đánh dấu' : 'Đánh dấu'}</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="font-semibold text-slate-900 dark:text-white text-sm sm:text-base mb-4 leading-relaxed">
+                        ${qObj.q}
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5">
+                        ${optionsHTML}
+                    </div>
+                `;
+                p1List.appendChild(card);
+            });
+
+            // ==================== RENDER PHẦN II (ĐÚNG / SAI) ====================
+            examState.part2Questions.forEach((qObj, qIndex) => {
+                const userSubAnswers = examState.answersP2[qIndex] || {};
+                const isFlagged = !!examState.flaggedP2[qIndex];
+
+                let correctSubCount = 0;
+                qObj.items.forEach((sub, sIdx) => {
+                    if (userSubAnswers[sIdx] === sub.answer) correctSubCount++;
+                });
+                const earnedPoints = getPart2QuestionScore(correctSubCount);
+
+                if (isSubmitted) {
+                    if (examState.reviewFilter === 'wrong' && correctSubCount === 4) return;
+                    if (examState.reviewFilter === 'flagged' && !isFlagged) return;
+                }
+
+                let scoreBadge = '';
+                if (isSubmitted) {
+                    const color = correctSubCount === 4
+                        ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-500/30'
+                        : (correctSubCount > 0 ? 'bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30' : 'bg-rose-500/15 text-rose-700 dark:text-rose-300 border-rose-500/30');
+                    scoreBadge = `
+                        <span class="px-2.5 py-1 rounded-lg border text-xs font-extrabold ${color}">
+                            Đúng ${correctSubCount}/4 ý (+${earnedPoints.toFixed(2).replace('.', ',')}đ)
+                        </span>
+                    `;
+                }
+
+                const passageBlock = qObj.isHtmlPassage
+                    ? qObj.passage
+                    : `<div class="p-4 rounded-xl bg-emerald-50/50 dark:bg-slate-800/80 border-l-4 border-emerald-600 text-slate-800 dark:text-slate-200 text-sm leading-relaxed mb-4">${qObj.passage}</div>`;
+
+                const subRowsHTML = qObj.items.map((subItem, sIdx) => {
+                    const userChoice = userSubAnswers[sIdx];
+                    const isSubCorrect = userChoice === subItem.answer;
+
+                    // Gạch chân chữ cái đầu a), b), c), d) và nội dung nếu mệnh đề đó là ĐÚNG (y hệt file docx gốc)
+                    const labelUnderline = (showUnderline && subItem.answer) ? "underline decoration-2 underline-offset-4 text-emerald-700 dark:text-emerald-400" : "";
+                    const textUnderline = (showUnderline && subItem.answer) ? "correct-underline font-semibold" : "";
+
+                    let trueBtnClass = "border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:border-emerald-500";
+                    let falseBtnClass = "border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:border-rose-500";
+                    let resultInfoHTML = "";
+
+                    if (!isSubmitted) {
+                        if (userChoice === true) {
+                            trueBtnClass = "border-2 border-emerald-600 bg-emerald-600 text-white font-extrabold shadow-xs";
+                        } else if (userChoice === false) {
+                            falseBtnClass = "border-2 border-rose-600 bg-rose-500 text-white font-extrabold shadow-xs";
+                        }
+                    } else {
+                        if (userChoice === true) {
+                            trueBtnClass = isSubCorrect
+                                ? "border-2 border-emerald-600 bg-emerald-600 text-white font-extrabold"
+                                : "border-2 border-rose-600 bg-rose-500 text-white font-extrabold";
+                        } else if (userChoice === false) {
+                            falseBtnClass = isSubCorrect
+                                ? "border-2 border-emerald-600 bg-emerald-600 text-white font-extrabold"
+                                : "border-2 border-rose-600 bg-rose-500 text-white font-extrabold";
+                        }
+
+                        const correctLabel = subItem.answer ? 'ĐÚNG (Gạch chân)' : 'SAI';
+                        if (userChoice === undefined) {
+                            resultInfoHTML = `<div class="text-xs font-bold text-rose-500 mt-1"><i class="fa-solid fa-circle-exclamation mr-1"></i>Chưa chọn • Đáp án chuẩn: <span class="underline">${correctLabel}</span></div>`;
+                        } else if (isSubCorrect) {
+                            resultInfoHTML = `<div class="text-xs font-bold text-emerald-600 dark:text-emerald-400 mt-1"><i class="fa-solid fa-check mr-1"></i>Chính xác • Đáp án chuẩn: <span class="underline">${correctLabel}</span></div>`;
+                        } else {
+                            resultInfoHTML = `<div class="text-xs font-bold text-rose-600 dark:text-rose-400 mt-1"><i class="fa-solid fa-xmark mr-1"></i>Sai • Đáp án chuẩn: <span class="underline">${correctLabel}</span></div>`;
+                        }
+                    }
+
+                    return `
+                        <div class="p-3.5 rounded-xl border ${
+                            isSubmitted
+                                ? (isSubCorrect ? 'border-emerald-500/40 bg-emerald-50/30 dark:bg-emerald-950/15' : 'border-rose-500/40 bg-rose-50/30 dark:bg-rose-950/15')
+                                : 'border-slate-200 dark:border-slate-700/80 bg-slate-50/60 dark:bg-slate-800/40'
+                        } flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                            <div class="space-y-1 flex-1">
+                                <div class="text-sm text-slate-800 dark:text-slate-100 leading-relaxed">
+                                    <strong class="mr-1.5 text-geo-800 dark:text-emerald-400 ${labelUnderline}">${SUB_ITEM_LABELS[sIdx]}</strong>
+                                    <span class="${textUnderline}">${subItem.text}</span>
+                                </div>
+                                ${resultInfoHTML}
+                            </div>
+                            <div class="flex items-center gap-2 shrink-0 self-end sm:self-center">
+                                <button type="button"
+                                    ${isSubmitted ? 'disabled' : `onclick="selectPart2Answer(${qIndex}, ${sIdx}, true)"`}
+                                    class="px-4 py-2 rounded-xl border text-xs sm:text-sm font-semibold transition min-w-[78px] ${trueBtnClass}">
+                                    <span class="${showUnderline && subItem.answer ? 'underline decoration-2 underline-offset-2' : ''}">Đúng</span>
+                                </button>
+                                <button type="button"
+                                    ${isSubmitted ? 'disabled' : `onclick="selectPart2Answer(${qIndex}, ${sIdx}, false)"`}
+                                    class="px-4 py-2 rounded-xl border text-xs sm:text-sm font-semibold transition min-w-[78px] ${falseBtnClass}">
+                                    <span class="${showUnderline && !subItem.answer ? 'underline decoration-2 underline-offset-2' : ''}">Sai</span>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                const card = document.createElement('div');
+                card.id = `question_p2_${qIndex}`;
+                card.className = `scroll-mt-24 rounded-2xl border p-4 sm:p-6 bg-white dark:bg-slate-900 transition ${
+                    isSubmitted
+                        ? (correctSubCount === 4 ? 'border-emerald-500/50' : 'border-amber-500/50')
+                        : 'border-slate-200 dark:border-slate-800'
+                }`;
+
+                card.innerHTML = `
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                        <div class="flex items-center gap-2">
+                            <span class="px-3 py-1 rounded-lg bg-sky-600 text-white font-extrabold text-xs sm:text-sm">
+                                Câu ${qIndex + 1} (Phần II)
+                            </span>
+                            <span class="text-xs font-medium text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-lg">
+                                Trắc nghiệm Đúng / Sai
+                            </span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            ${scoreBadge}
+                            <button type="button" onclick="toggleFlag('p2', ${qIndex})"
+                                class="px-2.5 py-1 rounded-lg text-xs font-semibold border transition flex items-center gap-1 ${
+                                    isFlagged
+                                        ? 'bg-rose-500/15 text-rose-600 dark:text-rose-400 border-rose-500/40'
+                                        : 'bg-slate-100 dark:bg-slate-800 text-slate-500 border-slate-200 dark:border-slate-700 hover:text-rose-500'
+                                }">
+                                <i class="fa-${isFlagged ? 'solid' : 'regular'} fa-flag"></i>
+                                <span class="hidden sm:inline">${isFlagged ? 'Đã đánh dấu' : 'Đánh dấu'}</span>
+                            </button>
+                        </div>
+                    </div>
+                    <p class="font-semibold text-sm text-slate-700 dark:text-slate-300 mb-2">${qObj.prompt}</p>
+                    ${passageBlock}
+                    <div class="space-y-2.5">
+                        ${subRowsHTML}
+                    </div>
+                `;
+                p2List.appendChild(card);
+            });
+
+            // ==================== RENDER PHẦN III (TRẢ LỜI NGẮN) ====================
+            examState.part3Questions.forEach((qObj, qIndex) => {
+                const userVal = examState.answersP3[qIndex] !== undefined ? examState.answersP3[qIndex] : '';
+                const isFlagged = !!examState.flaggedP3[qIndex];
+                const isCorrect = isSubmitted && isShortAnswerCorrect(userVal, qObj.answer);
+
+                if (isSubmitted) {
+                    if (examState.reviewFilter === 'wrong' && isCorrect) return;
+                    if (examState.reviewFilter === 'flagged' && !isFlagged) return;
+                }
+
+                let statusBadge = '';
+                if (isSubmitted) {
+                    if (!userVal.trim()) {
+                        statusBadge = `<span class="px-2.5 py-1 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-bold">Chưa điền (0đ)</span>`;
+                    } else if (isCorrect) {
+                        statusBadge = `<span class="px-2.5 py-1 rounded-lg bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 text-xs font-bold"><i class="fa-solid fa-check mr-1"></i>Đúng (+0,25đ)</span>`;
+                    } else {
+                        statusBadge = `<span class="px-2.5 py-1 rounded-lg bg-rose-500/15 text-rose-700 dark:text-rose-300 border border-rose-500/30 text-xs font-bold"><i class="fa-solid fa-xmark mr-1"></i>Sai (0đ)</span>`;
+                    }
+                }
+
+                // Hiển thị ô ký tự phiếu trả lời ngắn chuẩn Bộ GD&ĐT (4 ô)
+                const displayChars = (userVal || '').slice(0, 4).padEnd(4, ' ').split('');
+                const boxesHTML = displayChars.map(ch => `
+                    <span class="w-8 h-9 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 font-mono font-bold text-sm flex items-center justify-center text-geo-800 dark:text-emerald-300 shadow-2xs">
+                        ${ch.trim() ? ch : ''}
+                    </span>
+                `).join('');
+
+                let explanationHTML = '';
+                if (showUnderline) {
+                    explanationHTML = `
+                        <div class="mt-3 p-3.5 rounded-xl bg-emerald-50/80 dark:bg-emerald-950/30 border border-emerald-500/30 text-xs space-y-1">
+                            <div class="font-bold text-emerald-800 dark:text-emerald-300">
+                                <i class="fa-solid fa-key mr-1"></i>Đáp án chuẩn Bộ GD&ĐT: <span class="correct-underline text-sm font-mono font-extrabold ml-1">${qObj.answer}</span> (${qObj.unit})
+                            </div>
+                            <div class="text-slate-600 dark:text-slate-300">
+                                <strong>Cách tính:</strong> ${qObj.explanation}
+                            </div>
+                        </div>
+                    `;
+                }
+
+                const card = document.createElement('div');
+                card.id = `question_p3_${qIndex}`;
+                card.className = `scroll-mt-24 rounded-2xl border p-4 sm:p-5 bg-white dark:bg-slate-900 transition ${
+                    isSubmitted
+                        ? (isCorrect ? 'border-emerald-500/50' : 'border-rose-500/50')
+                        : 'border-slate-200 dark:border-slate-800'
+                }`;
+
+                card.innerHTML = `
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                        <div class="flex items-center gap-2">
+                            <span class="px-3 py-1 rounded-lg bg-amber-500 text-slate-950 font-extrabold text-xs sm:text-sm">
+                                Câu ${qIndex + 1} (Phần III)
+                            </span>
+                            <span class="text-xs font-medium text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-lg">
+                                Trả lời ngắn (0,25 điểm)
+                            </span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            ${statusBadge}
+                            <button type="button" onclick="toggleFlag('p3', ${qIndex})"
+                                class="px-2.5 py-1 rounded-lg text-xs font-semibold border transition flex items-center gap-1 ${
+                                    isFlagged
+                                        ? 'bg-rose-500/15 text-rose-600 dark:text-rose-400 border-rose-500/40'
+                                        : 'bg-slate-100 dark:bg-slate-800 text-slate-500 border-slate-200 dark:border-slate-700 hover:text-rose-500'
+                                }">
+                                <i class="fa-${isFlagged ? 'solid' : 'regular'} fa-flag"></i>
+                                <span class="hidden sm:inline">${isFlagged ? 'Đã đánh dấu' : 'Đánh dấu'}</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="font-semibold text-slate-900 dark:text-white text-sm sm:text-base mb-4 leading-relaxed">
+                        ${qObj.q}
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
+                        <div class="flex items-center gap-3 flex-1">
+                            <label class="text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-200 whitespace-nowrap">
+                                Đáp số của bạn:
+                            </label>
+                            <div class="relative flex-1 max-w-[200px]">
+                                <input type="text"
+                                    inputmode="decimal"
+                                    placeholder="Nhập số (VD: 72,3)"
+                                    value="${userVal}"
+                                    ${isSubmitted ? 'disabled' : `oninput="inputPart3Answer(${qIndex}, this.value)"`}
+                                    class="w-full px-3.5 py-2 rounded-xl border-2 font-mono font-bold text-sm focus:outline-none transition ${
+                                        isSubmitted
+                                            ? (isCorrect ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-300' : 'border-rose-500 bg-rose-50 dark:bg-rose-950/30 text-rose-700 dark:text-rose-300')
+                                            : 'border-slate-300 dark:border-slate-600 focus:border-emerald-500 bg-white dark:bg-slate-900'
+                                    }">
+                            </div>
+                            <span class="text-xs font-semibold text-slate-500">${qObj.unit || ''}</span>
+                        </div>
+
+                        <div class="flex items-center gap-2">
+                            <span class="text-[11px] text-slate-500">Ô phiếu tô:</span>
+                            <div id="short_boxes_${qIndex}" class="flex items-center gap-1">
+                                ${boxesHTML}
+                            </div>
+                        </div>
+                    </div>
+                    ${explanationHTML}
+                `;
+                p3List.appendChild(card);
+            });
+        }
+
+        /**************************************************************************
+         * 6. XỬ LÝ CHỌN / NHẬP ĐÁP ÁN Ở 3 PHẦN
+         **************************************************************************/
+        function selectPart1Answer(qIndex, optIndex) {
+            if (examState.isSubmitted) return;
+            examState.answersP1[qIndex] = optIndex;
+            renderAllQuestions();
+            renderQuestionPalette();
+            updateProgressCounters();
+        }
+
+        function selectPart2Answer(qIndex, subIndex, booleanVal) {
+            if (examState.isSubmitted) return;
+            if (!examState.answersP2[qIndex]) examState.answersP2[qIndex] = {};
+            examState.answersP2[qIndex][subIndex] = booleanVal;
+            renderAllQuestions();
+            renderQuestionPalette();
+            updateProgressCounters();
+        }
+
+        function inputPart3Answer(qIndex, val) {
+            if (examState.isSubmitted) return;
+            if (val.trim() === '') {
+                delete examState.answersP3[qIndex];
+            } else {
+                examState.answersP3[qIndex] = val;
+            }
+            // Cập nhật trực tiếp 4 ô phiếu tô để không làm mất focus ô input
+            const boxesContainer = document.getElementById(`short_boxes_${qIndex}`);
+            if (boxesContainer) {
+                const chars = (val || '').slice(0, 4).padEnd(4, ' ').split('');
+                boxesContainer.innerHTML = chars.map(ch => `
+                    <span class="w-8 h-9 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 font-mono font-bold text-sm flex items-center justify-center text-geo-800 dark:text-emerald-300 shadow-2xs">
+                        ${ch.trim() ? ch : ''}
+                    </span>
+                `).join('');
+            }
+            renderQuestionPalette();
+            updateProgressCounters();
+        }
+
+        function toggleFlag(part, qIndex) {
+            if (part === 'p1') examState.flaggedP1[qIndex] = !examState.flaggedP1[qIndex];
+            else if (part === 'p2') examState.flaggedP2[qIndex] = !examState.flaggedP2[qIndex];
+            else if (part === 'p3') examState.flaggedP3[qIndex] = !examState.flaggedP3[qIndex];
+            renderAllQuestions();
+            renderQuestionPalette();
+        }
+
+        /**************************************************************************
+         * 7. RENDER BẢNG ĐIỀU HƯỚNG CÂU HỎI (QUESTION PALETTE)
+         **************************************************************************/
+        function renderQuestionPalette() {
+            const buildP1 = (isMob) => examState.part1Questions.map((qObj, idx) => {
+                const answered = examState.answersP1[idx] !== undefined;
+                const flagged = !!examState.flaggedP1[idx];
+                let color = "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700 hover:border-emerald-500";
+                if (!examState.isSubmitted) {
+                    if (answered) color = "bg-emerald-600 text-white font-extrabold border-emerald-600";
+                } else {
+                    const correctIdx = qObj.options.findIndex(o => o.isCorrect);
+                    color = (examState.answersP1[idx] === correctIdx)
+                        ? "bg-emerald-600 text-white font-extrabold border-emerald-600"
+                        : "bg-rose-500 text-white font-extrabold border-rose-500";
+                }
+                const ring = flagged ? "ring-2 ring-rose-500 ring-offset-1 dark:ring-offset-slate-900" : "";
+                const letter = answered ? OPTION_LABELS[examState.answersP1[idx]] : '';
+                return `<button type="button" onclick="scrollToQuestion('p1', ${idx}, ${isMob})" class="h-9 rounded-lg text-xs font-bold flex items-center justify-center transition ${color} ${ring}">${idx + 1}${letter ? `<sub class="ml-0.5 text-[10px]">${letter}</sub>` : ''}</button>`;
+            }).join('');
+
+            const buildP2 = (isMob) => examState.part2Questions.map((qObj, idx) => {
+                const subAns = examState.answersP2[idx] || {};
+                const count = Object.keys(subAns).length;
+                const flagged = !!examState.flaggedP2[idx];
+                let color = "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700 hover:border-emerald-500";
+                if (!examState.isSubmitted) {
+                    if (count === 4) color = "bg-emerald-600 text-white font-extrabold border-emerald-600";
+                    else if (count > 0) color = "bg-amber-300 dark:bg-amber-700 text-slate-900 dark:text-white font-bold border-amber-400";
+                } else {
+                    let c = 0;
+                    qObj.items.forEach((s, sIdx) => { if (subAns[sIdx] === s.answer) c++; });
+                    if (c === 4) color = "bg-emerald-600 text-white font-extrabold border-emerald-600";
+                    else if (c > 0) color = "bg-amber-500 text-slate-950 font-extrabold border-amber-500";
+                    else color = "bg-rose-500 text-white font-extrabold border-rose-500";
+                }
+                const ring = flagged ? "ring-2 ring-rose-500 ring-offset-1 dark:ring-offset-slate-900" : "";
+                return `<button type="button" onclick="scrollToQuestion('p2', ${idx}, ${isMob})" class="h-10 rounded-lg text-xs font-bold flex flex-col items-center justify-center leading-tight transition ${color} ${ring}"><span>C.${idx + 1}</span><span class="text-[10px] opacity-85">${count}/4</span></button>`;
+            }).join('');
+
+            const buildP3 = (isMob) => examState.part3Questions.map((qObj, idx) => {
+                const val = examState.answersP3[idx] || '';
+                const answered = val.trim().length > 0;
+                const flagged = !!examState.flaggedP3[idx];
+                let color = "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700 hover:border-emerald-500";
+                if (!examState.isSubmitted) {
+                    if (answered) color = "bg-emerald-600 text-white font-extrabold border-emerald-600";
+                } else {
+                    color = isShortAnswerCorrect(val, qObj.answer)
+                        ? "bg-emerald-600 text-white font-extrabold border-emerald-600"
+                        : "bg-rose-500 text-white font-extrabold border-rose-500";
+                }
+                const ring = flagged ? "ring-2 ring-rose-500 ring-offset-1 dark:ring-offset-slate-900" : "";
+                return `<button type="button" onclick="scrollToQuestion('p3', ${idx}, ${isMob})" class="h-10 rounded-lg text-xs font-bold flex flex-col items-center justify-center leading-tight transition ${color} ${ring}"><span>C.${idx + 1}</span><span class="text-[10px] font-mono truncate max-w-[46px]">${answered ? val : '--'}</span></button>`;
+            }).join('');
+
+            document.getElementById('palettePart1Grid').innerHTML = buildP1(false);
+            document.getElementById('palettePart2Grid').innerHTML = buildP2(false);
+            document.getElementById('palettePart3Grid').innerHTML = buildP3(false);
+
+            document.getElementById('mobilePalettePart1Grid').innerHTML = buildP1(true);
+            document.getElementById('mobilePalettePart2Grid').innerHTML = buildP2(true);
+            document.getElementById('mobilePalettePart3Grid').innerHTML = buildP3(true);
+        }
+
+        function scrollToQuestion(part, index, closeMobile) {
+            if (closeMobile) toggleMobilePalette();
+            const el = document.getElementById(`question_${part}_${index}`);
+            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function updateProgressCounters() {
+            const total = examState.part1Questions.length + examState.part2Questions.length + examState.part3Questions.length;
+            const doneP1 = Object.keys(examState.answersP1).length;
+            let doneP2 = 0;
+            examState.part2Questions.forEach((_, idx) => {
+                if (examState.answersP2[idx] && Object.keys(examState.answersP2[idx]).length === 4) doneP2++;
+            });
+            const doneP3 = Object.keys(examState.answersP3).filter(k => (examState.answersP3[k] || '').trim() !== '').length;
+            const doneTotal = doneP1 + doneP2 + doneP3;
+
+            document.getElementById('headerProgressText').textContent = `${doneTotal}/${total}`;
+            document.getElementById('sidebarProgressBadge').textContent = `${doneTotal}/${total}`;
+            document.getElementById('mobileProgressBadge').textContent = `${doneTotal}`;
+        }
+
+        function toggleMobilePalette() {
+            document.getElementById('mobilePaletteModal').classList.toggle('hidden');
+        }
+
+        /**************************************************************************
+         * 8. ĐỒNG HỒ ĐẾM NGƯỢC & MÁY TÍNH BỎ TÚI ĐỊA LÍ
+         **************************************************************************/
+        function startTimer() {
+            updateTimerUI();
+            examState.timerInterval = setInterval(() => {
+                if (examState.isSubmitted) {
+                    clearInterval(examState.timerInterval);
+                    return;
+                }
+                examState.remainingSeconds--;
+                examState.elapsedSeconds++;
+                updateTimerUI();
+
+                if (examState.remainingSeconds <= 0) {
+                    clearInterval(examState.timerInterval);
+                    gradeExam(true);
+                }
+            }, 1000);
+        }
+
+        function updateTimerUI() {
+            const mins = Math.floor(Math.max(0, examState.remainingSeconds) / 60);
+            const secs = Math.max(0, examState.remainingSeconds) % 60;
+            document.getElementById('timerDisplay').textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+            const containerEl = document.getElementById('timerContainer');
+            if (examState.remainingSeconds <= 300 && !examState.isSubmitted) {
+                containerEl.classList.add('timer-warning', 'text-rose-400', 'border-rose-500');
+            } else {
+                containerEl.classList.remove('timer-warning', 'text-rose-400', 'border-rose-500');
+            }
+        }
+
+        function toggleCalculator() {
+            document.getElementById('calcWidget').classList.toggle('hidden');
+        }
+
+        function calcInput(key) {
+            const disp = document.getElementById('calcDisplay');
+            if (key === 'C') {
+                disp.value = '0';
+            } else if (key === 'DEL') {
+                disp.value = disp.value.length > 1 ? disp.value.slice(0, -1) : '0';
+            } else if (key === '=') {
+                try {
+                    const sanitized = disp.value.replace(/[^0-9+\-*/.()]/g, '');
+                    const res = Function(`"use strict"; return (${sanitized})`)();
+                    disp.value = Number.isFinite(res) ? String(Math.round(res * 1000) / 1000) : 'Lỗi';
+                } catch {
+                    disp.value = 'Lỗi';
+                }
+            } else {
+                if (disp.value === '0' || disp.value === 'Lỗi') disp.value = key;
+                else disp.value += key;
+            }
+        }
+
+        /**************************************************************************
+         * 9. CHẤM ĐIỂM CHUẨN BỘ GD&ĐT MÔN ĐỊA LÍ NĂM 2026
+         * - Phần I: 0,25đ / câu
+         * - Phần II: 1 ý = 0,1đ; 2 ý = 0,25đ; 3 ý = 0,5đ; 4 ý = 1,0đ
+         * - Phần III: 0,25đ / câu trả lời ngắn
+         **************************************************************************/
+        function getPart2QuestionScore(correctSubCount) {
+            switch (correctSubCount) {
+                case 1: return 0.1;
+                case 2: return 0.25;
+                case 3: return 0.5;
+                case 4: return 1.0;
+                default: return 0.0;
+            }
+        }
+
+        function openSubmitModal() {
+            if (examState.isSubmitted) return;
+
+            const missingP1 = examState.part1Questions.length - Object.keys(examState.answersP1).length;
+            let doneSubP2 = 0;
+            examState.part2Questions.forEach((_, idx) => {
+                doneSubP2 += Object.keys(examState.answersP2[idx] || {}).length;
+            });
+            const missingSubP2 = (examState.part2Questions.length * 4) - doneSubP2;
+            const doneP3 = Object.keys(examState.answersP3).filter(k => (examState.answersP3[k] || '').trim() !== '').length;
+            const missingP3 = examState.part3Questions.length - doneP3;
+
+            let msg = `<p class="mb-2">Bạn có chắc chắn muốn nộp bài và xem đáp án gạch chân chi tiết?</p>`;
+            if (missingP1 > 0 || missingSubP2 > 0 || missingP3 > 0) {
+                msg += `
+                    <div class="p-3 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-800 dark:text-amber-300 text-xs space-y-1 mt-2">
+                        <div class="font-bold"><i class="fa-solid fa-triangle-exclamation mr-1"></i>Các mục chưa hoàn thành:</div>
+                        ${missingP1 > 0 ? `<div>• Phần I còn <strong>${missingP1} câu</strong> chưa chọn.</div>` : ''}
+                        ${missingSubP2 > 0 ? `<div>• Phần II còn <strong>${missingSubP2} ý Đúng/Sai</strong> chưa chọn.</div>` : ''}
+                        ${missingP3 > 0 ? `<div>• Phần III còn <strong>${missingP3} câu trả lời ngắn</strong> chưa điền số.</div>` : ''}
+                    </div>
+                `;
+            } else {
+                msg += `<div class="text-xs font-bold text-emerald-600 dark:text-emerald-400"><i class="fa-solid fa-circle-check mr-1"></i>Bạn đã hoàn thành đầy đủ cả 3 phần của đề thi!</div>`;
+            }
+
+            showCustomModal({
+                title: "Nộp bài kiểm tra Địa lí 12",
+                subtitle: `Mã đề: ${examState.examCode}`,
+                bodyHTML: msg,
+                confirmText: "Nộp bài & Xem điểm",
+                onConfirm: () => {
+                    closeCustomModal();
+                    gradeExam(false);
+                }
+            });
+        }
+
+        function gradeExam(isAutoTimeout) {
+            if (examState.timerInterval) clearInterval(examState.timerInterval);
+            examState.isSubmitted = true;
+
+            // 1. Điểm Phần I
+            let correctP1 = 0;
+            examState.part1Questions.forEach((qObj, idx) => {
+                const correctIdx = qObj.options.findIndex(o => o.isCorrect);
+                if (examState.answersP1[idx] === correctIdx) correctP1++;
+            });
+            const scoreP1 = correctP1 * 0.25;
+            const maxP1 = examState.part1Questions.length * 0.25;
+
+            // 2. Điểm Phần II
+            let scoreP2 = 0;
+            let totalCorrectSubs = 0;
+            examState.part2Questions.forEach((qObj, idx) => {
+                const subAns = examState.answersP2[idx] || {};
+                let c = 0;
+                qObj.items.forEach((s, sIdx) => {
+                    if (subAns[sIdx] === s.answer) {
+                        c++;
+                        totalCorrectSubs++;
+                    }
+                });
+                scoreP2 += getPart2QuestionScore(c);
+            });
+            const maxP2 = examState.part2Questions.length * 1.0;
+
+            // 3. Điểm Phần III
+            let correctP3 = 0;
+            examState.part3Questions.forEach((qObj, idx) => {
+                if (isShortAnswerCorrect(examState.answersP3[idx], qObj.answer)) {
+                    correctP3++;
+                }
+            });
+            const scoreP3 = correctP3 * 0.25;
+            const maxP3 = examState.part3Questions.length * 0.25;
+
+            const totalRaw = scoreP1 + scoreP2 + scoreP3;
+            const totalMax = maxP1 + maxP2 + maxP3;
+            const scaled10 = totalMax > 0 ? (totalRaw / totalMax) * 10 : 0;
+
+            document.getElementById('resultSummaryPanel').classList.remove('hidden');
+            document.getElementById('headerSubmitBtn').classList.add('hidden');
+            document.getElementById('sidebarSubmitBtn').classList.add('hidden');
+
+            const mins = Math.floor(examState.elapsedSeconds / 60);
+            const secs = examState.elapsedSeconds % 60;
+            document.getElementById('resultTitleText').textContent = isAutoTimeout
+                ? "Hết giờ! Hệ thống đã tự động thu bài và chấm điểm."
+                : "Hoàn thành bài kiểm tra Địa lí 12!";
+            document.getElementById('resultTimeSpentText').textContent = `Mã đề: ${examState.examCode} • Thời gian làm: ${mins} phút ${secs} giây`;
+
+            document.getElementById('finalScore10Display').textContent = scaled10.toFixed(2).replace('.', ',');
+            document.getElementById('part1ScoreDisplay').textContent = `${scoreP1.toFixed(2).replace('.', ',')} / ${maxP1.toFixed(2).replace('.', ',')}đ`;
+            document.getElementById('part1CorrectCountDisplay').textContent = `Đúng ${correctP1}/${examState.part1Questions.length} câu (0,25đ/câu)`;
+
+            document.getElementById('part2ScoreDisplay').textContent = `${scoreP2.toFixed(2).replace('.', ',')} / ${maxP2.toFixed(2).replace('.', ',')}đ`;
+            document.getElementById('part2SubCountDisplay').textContent = `Đúng ${totalCorrectSubs}/${examState.part2Questions.length * 4} ý a, b, c, d`;
+
+            document.getElementById('part3ScoreDisplay').textContent = `${scoreP3.toFixed(2).replace('.', ',')} / ${maxP3.toFixed(2).replace('.', ',')}đ`;
+            document.getElementById('part3CorrectCountDisplay').textContent = `Đúng ${correctP3}/${examState.part3Questions.length} câu (0,25đ/câu)`;
+
+            renderAllQuestions();
+            renderQuestionPalette();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function setReviewFilter(filterType) {
+            examState.reviewFilter = filterType;
+            const activeClass = "px-3 py-1.5 rounded-xl text-xs font-bold bg-geo-700 text-white";
+            const inactiveClass = "px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700";
+
+            document.getElementById('filterBtnAll').className = filterType === 'all' ? activeClass : inactiveClass;
+            document.getElementById('filterBtnWrong').className = filterType === 'wrong' ? activeClass : inactiveClass;
+            document.getElementById('filterBtnFlagged').className = filterType === 'flagged' ? activeClass : inactiveClass;
+            renderAllQuestions();
+        }
+
+        /**************************************************************************
+         * 10. MODAL ĐIỀU KHIỂN & GIAO DIỆN SÁNG/TỐI
+         **************************************************************************/
+        function showCustomModal({ title, subtitle, bodyHTML, confirmText, onConfirm }) {
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalSubtitle').textContent = subtitle || '';
+            document.getElementById('modalBody').innerHTML = bodyHTML;
+            const btn = document.getElementById('modalConfirmBtn');
+            btn.textContent = confirmText || 'Đồng ý';
+            btn.onclick = onConfirm;
+            document.getElementById('customModal').classList.remove('hidden');
+        }
+
+        function closeCustomModal() {
+            document.getElementById('customModal').classList.add('hidden');
+        }
+
+        function confirmReshuffle() {
+            if (examState.isSubmitted) {
+                reshuffleAndRestart();
+                return;
+            }
+            showCustomModal({
+                title: "Đảo đề Địa lí mới?",
+                subtitle: "Trộn lại toàn bộ câu hỏi và đảo vị trí A, B, C, D",
+                bodyHTML: "Bài đang làm hiện tại sẽ được tạo mới với mã đề và thứ tự đáp án hoàn toàn khác. Bạn có muốn đổi đề ngay không?",
+                confirmText: "Đảo đề mới",
+                onConfirm: () => {
+                    closeCustomModal();
+                    reshuffleAndRestart();
+                }
+            });
+        }
+
+        function reshuffleAndRestart() {
+            startExam();
+        }
+
+        function confirmExitToSetup() {
+            if (examState.isSubmitted) {
+                exitToSetup();
+                return;
+            }
+            showCustomModal({
+                title: "Quay lại màn hình cấu hình?",
+                subtitle: "Tiến độ bài đang làm sẽ bị hủy",
+                bodyHTML: "Nếu thoát ra màn hình cấu hình bây giờ, kết quả đang làm sẽ không được lưu. Bạn có chắc chắn muốn thoát?",
+                confirmText: "Thoát về cấu hình",
+                onConfirm: () => {
+                    closeCustomModal();
+                    exitToSetup();
+                }
+            });
+        }
+
+        function exitToSetup() {
+            if (examState.timerInterval) clearInterval(examState.timerInterval);
+            examState.isActive = false;
+            document.getElementById('examWorkspace').classList.add('hidden');
+            document.getElementById('examHeaderControls').classList.add('hidden');
+            document.getElementById('examHeaderControls').classList.remove('flex');
+            document.getElementById('backToConfigBtn').classList.add('hidden');
+            document.getElementById('setupScreen').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function toggleDarkMode() {
+            const htmlEl = document.documentElement;
+            const icon = document.getElementById('themeIcon');
+            htmlEl.classList.toggle('dark');
+            icon.className = htmlEl.classList.contains('dark') ? "fa-solid fa-sun" : "fa-solid fa-moon";
+        }
+    </script>
+</body>
+</html>
